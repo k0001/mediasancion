@@ -23,11 +23,11 @@ from django.conf.urls.defaults import *
 # core:bloques:
 urlpatterns_bloques = patterns('mediasancion.core.views',
     url(r'^$',
-        'partido_list',
+        'bloque_list',
         name='list'),
 
     url(r'^(?P<slug>[-\w]+)/$',
-        'partido_detail',
+        'bloque_detail',
         name='detail'),
 )
 

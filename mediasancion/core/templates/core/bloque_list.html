@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load utils_html %}
+
+{% block bodyid %}bloque-list{% endblock %}
+
+{% block content %}
+  <section class="bloques content-wrap">
+    {% for bloque in bloques %}
+      <article class="bloque" id="{{ bloque.uuid }}">
+        <h1><a href="{{ bloque.get_absolute_url }}">{{ bloque.nombre }}</a></h1>
+        <div class="legisladores">
+          <p>
+            {% trans "Legisladores en el Congreso" %}:
+            <strong><span class="legislador-count">{{ bloque.legislador__count }}</span></strong>
+          </p>
+          {% if bloque.legislador__count %}
+            <ul>
+              {% for legislador in bloque.denorm_legisladores %}
+                <li class="legislador" id="{{ legislador.uuid }}">
+                  {{ legislador.persona|objlink }}
+                </li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+        </div>
+      </article>
+    {% endfor %}
+  </section>
+{% endblock %}
+

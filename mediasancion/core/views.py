@@ -17,10 +17,43 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-def partido_list(request):
-    pass
+from datetime import datetime
+from django.db.models import Count
+from django.shortcuts import render_to_response
+from django.template import RequestContext
+from django.utils.translation import ugettext_lazy as _
+from .models import Bloque
 
-def partido_detail(request, slug):
+
+def bloque_list(request):
+    qs = Bloque.objects.all()
+
+    # NOTE By default we list only Bloque objects with at least a Legislador
+    #      currently active.
+    utcnow = datetime.utcnow()
+    qs = qs.filter(legislador__inicio__lte=utcnow,
+                   legislador__fin__gte=utcnow)
+
+    qs = qs.select_related('legislador') \
+           .annotate(Count('legislador')) \
+           .order_by('nombre') \
+
+    bloques = qs.all()
+
+    # Denormalize Legislador objects related to each Bloque, sorting them by name
+    for b in bloques:
+        b.denorm_legisladores = b.legislador_set.select_related('persona') \
+                                                .order_by('persona__apellido',
+                                                          'persona__nombre')
+
+    c = { 'title': _(u"Bloques"),
+          'bloques': bloques }
+
+    return render_to_response('core/bloque_list.html', c,
+                              context_instance=RequestContext(request))
+
+
+def bloque_detail(request, slug):
     pass
 
 def distrito_list(request):
