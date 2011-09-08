@@ -1,0 +1,64 @@
+LICENSING
+=========
+
+MediaSanción, aplicación web para acceder a los datos públicos de la
+actividad legislativa en Argentina.
+Copyright (C) 2010,2011 Renzo Carbonara <renzo @carbonara .com .ar>
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License as published by the Free
+Software Foundation, either version 3 of the License, or (at your option) any
+later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
+details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+See LICENSE file.
+
+
+AUTHORS
+=======
+
+See AUTHORS file.
+
+
+GETTING THE SOURCE CODE
+=======================
+
+The code is hosted at github::
+
+  http://github.com/k0001/mediasancion
+
+You can clone it from::
+
+  git://github.com/k0001/mediasancion.git
+
+
+INSTALL
+=======
+
+1. Setup and activate a virutalenv environment::
+
+    virtualenv ~/ve/MS --python=/usr/bin/python2.5
+    source ~/ve/MS/bin/activate
+
+2. Install libxml2 inside the virtualenv (if not globablly available)::
+
+    cd /tmp
+    wget ftp://ftp.xmlsoft.org/libxml2/libxml2-2.7.3.tar.gz
+    tar xzf libxml2-2.7.3.tar.gz
+    cd libxml2-2.7.3
+    ./configure --prefix=$VIRTUAL_ENV --with-threads --with-history --with-python=$VIRTUAL_ENV/bin/python
+    make
+    make install
+
+3. Install Python requirements using pip::
+
+    pip install -r pip-requirements.txt
+
+

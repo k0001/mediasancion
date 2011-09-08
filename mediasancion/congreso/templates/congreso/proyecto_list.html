@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load utils_html utils_pagination %}
+
+{% block bodyid %}proyecto-list{% endblock %}
+
+{% block content %}
+  {% show_gqslpagination_by_date page "reverse" %}
+  <div id="proyectos" class="content-wrap">
+    {% regroup page.object_list by publicacion_fecha as fecha_list %}
+    {% for fecha in fecha_list %}
+      <div class="proyectos-preview-set" id="proyectos-{{ fecha|date:"c" }}">
+        <h3>{{ fecha.grouper }}</h3>
+        <ul class="proyectos">
+          {% for p in fecha.list %}
+            <li class="proyecto" id="{{ p.uuid }}">
+              {{ p|objlink }} {{ p.get_camara_origen_display }}
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endfor %}
+  </div>
+  {% show_gqslpagination_by_date page "reverse" %}
+{% endblock %}

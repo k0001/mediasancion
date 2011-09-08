@@ -1,0 +1,2 @@
+{% load utils_html %}
+<div class="distrito" id="{{ object.uuid }}">{{ object|objlink }}</div>

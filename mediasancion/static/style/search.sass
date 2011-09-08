@@ -1,0 +1,63 @@
+/* MediaSanción, aplicación web para acceder a los datos públicos de la
+ * actividad legislativa en Argentina.
+ * Copyright (C) 2010,2011 Renzo Carbonara <renzo @carbonara .com .ar>
+ *
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>. */
+
+form#search
+  margin-top: 124px
+  float: right
+
+  label[for=search-q],
+  input#search-q
+    font-size: 1.6em
+    height: 32px
+    padding: 2px 8px
+    text-align: right
+    width: 240px
+    background: $brand_color_light
+
+    &:hover,
+    &.highlight
+      background: white
+      cursor: text
+      color: $brand_color_black
+
+  label[for=search-q]
+    position: absolute
+    z-index: 1
+    font-style: italic
+    color: $brand_color_dark
+    // These two values are for pixel perfection.
+    padding-top: 3px
+    height: 31px
+
+  input#search-q
+    z-index: 2
+    color: white
+    border: none
+
+body#search-results-page
+  #search-results
+    .proyecto
+      margin-top: 1em
+
+      &:first-child
+        margin-top: 0
+
+      .summary
+        color: $brand_color_blackish
+        font-size: 0.9em
+
+// vim: set expandtab sw=2 sts=2 ts=2 tw=120 ff=unix:

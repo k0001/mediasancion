@@ -1,0 +1,194 @@
+[
+ {
+  "pk": 1, 
+  "model": "core.distrito", 
+  "fields": {
+   "nombre": "Rio Negro", 
+   "slug": "rio-negro"
+  }
+ }, 
+ {
+  "pk": 2, 
+  "model": "core.distrito", 
+  "fields": {
+   "nombre": "Catamarca", 
+   "slug": "catamarca"
+  }
+ }, 
+ {
+  "pk": 3, 
+  "model": "core.distrito", 
+  "fields": {
+   "nombre": "Santiago Del Estero", 
+   "slug": "santiago-del-estero"
+  }
+ }, 
+ {
+  "pk": 4, 
+  "model": "core.distrito", 
+  "fields": {
+   "nombre": "La Rioja", 
+   "slug": "la-rioja"
+  }
+ }, 
+ {
+  "pk": 5, 
+  "model": "core.distrito", 
+  "fields": {
+   "nombre": "Buenos Aires", 
+   "slug": "buenos-aires"
+  }
+ }, 
+ {
+  "pk": 6, 
+  "model": "core.distrito", 
+  "fields": {
+   "nombre": "Cordoba", 
+   "slug": "cordoba"
+  }
+ }, 
+ {
+  "pk": 7, 
+  "model": "core.distrito", 
+  "fields": {
+   "nombre": "Santa Fe", 
+   "slug": "santa-fe"
+  }
+ }, 
+ {
+  "pk": 8, 
+  "model": "core.distrito", 
+  "fields": {
+   "nombre": "Entre Rios", 
+   "slug": "entre-rios"
+  }
+ }, 
+ {
+  "pk": 9, 
+  "model": "core.distrito", 
+  "fields": {
+   "nombre": "Santa Cruz", 
+   "slug": "santa-cruz"
+  }
+ }, 
+ {
+  "pk": 10, 
+  "model": "core.distrito", 
+  "fields": {
+   "nombre": "Tucuman", 
+   "slug": "tucuman"
+  }
+ }, 
+ {
+  "pk": 11, 
+  "model": "core.distrito", 
+  "fields": {
+   "nombre": "Ciudad De Buenos Aires", 
+   "slug": "ciudad-de-buenos-aires"
+  }
+ }, 
+ {
+  "pk": 12, 
+  "model": "core.distrito", 
+  "fields": {
+   "nombre": "Corrientes", 
+   "slug": "corrientes"
+  }
+ }, 
+ {
+  "pk": 13, 
+  "model": "core.distrito", 
+  "fields": {
+   "nombre": "Mendoza", 
+   "slug": "mendoza"
+  }
+ }, 
+ {
+  "pk": 14, 
+  "model": "core.distrito", 
+  "fields": {
+   "nombre": "Tierra Del Fuego", 
+   "slug": "tierra-del-fuego"
+  }
+ }, 
+ {
+  "pk": 15, 
+  "model": "core.distrito", 
+  "fields": {
+   "nombre": "Jujuy", 
+   "slug": "jujuy"
+  }
+ }, 
+ {
+  "pk": 16, 
+  "model": "core.distrito", 
+  "fields": {
+   "nombre": "San Luis", 
+   "slug": "san-luis"
+  }
+ }, 
+ {
+  "pk": 17, 
+  "model": "core.distrito", 
+  "fields": {
+   "nombre": "Neuquen", 
+   "slug": "neuquen"
+  }
+ }, 
+ {
+  "pk": 18, 
+  "model": "core.distrito", 
+  "fields": {
+   "nombre": "Formosa", 
+   "slug": "formosa"
+  }
+ }, 
+ {
+  "pk": 19, 
+  "model": "core.distrito", 
+  "fields": {
+   "nombre": "Chubut", 
+   "slug": "chubut"
+  }
+ }, 
+ {
+  "pk": 20, 
+  "model": "core.distrito", 
+  "fields": {
+   "nombre": "San Juan", 
+   "slug": "san-juan"
+  }
+ }, 
+ {
+  "pk": 21, 
+  "model": "core.distrito", 
+  "fields": {
+   "nombre": "Salta", 
+   "slug": "salta"
+  }
+ }, 
+ {
+  "pk": 22, 
+  "model": "core.distrito", 
+  "fields": {
+   "nombre": "Chaco", 
+   "slug": "chaco"
+  }
+ }, 
+ {
+  "pk": 23, 
+  "model": "core.distrito", 
+  "fields": {
+   "nombre": "La Pampa", 
+   "slug": "la-pampa"
+  }
+ }, 
+ {
+  "pk": 24, 
+  "model": "core.distrito", 
+  "fields": {
+   "nombre": "Misiones", 
+   "slug": "misiones"
+  }
+ }
+]

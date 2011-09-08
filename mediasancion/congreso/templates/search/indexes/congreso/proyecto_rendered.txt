@@ -1,0 +1,2 @@
+{% load utils_html %}
+<div class="proyecto" id="{{ object.uuid }}"><h3>{{ object|objlink }}</h3><p class="summary">{{ object.sumario }}</p></div>

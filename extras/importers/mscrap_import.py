@@ -1,0 +1,425 @@
+# coding: utf8
+
+# MediaSanción, aplicación web para acceder a los datos públicos de la
+# actividad legislativa en Argentina.
+# Copyright (C) 2010,2011 Renzo Carbonara <renzo @carbonara .com .ar>
+#
+# This program is free software: you can redistribute it and/or modify it under
+# the terms of the GNU Affero General Public License as published by the Free
+# Software Foundation, either version 3 of the License, or (at your option) any
+# later version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+# FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
+# details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+import json
+import logging
+import optparse
+import os
+import random
+import re
+import signal
+import sys
+import time
+import isodate
+from datetime import datetime
+from pprint import pprint
+
+from mediasancion.core.models import Partido, Distrito, Bloque, Persona
+from mediasancion.congreso.models import Proyecto, FirmaProyecto, Legislador, Comision
+
+
+logging.basicConfig(level=logging.WARNING)
+log = logging.getLogger(os.path.basename(__file__))
+
+AUDIT_ORIGIN = u'mscrap_import:%s' % datetime.utcnow().isoformat()
+
+debug_status = {
+    'time_start': time.time(),
+    'items_total': 0,
+    'items_left': { } }
+
+
+add_queue = []
+
+def store_legislador_item(x):
+    try:
+        distrito = Distrito.objects.get(nombre=x['distrito_nombre'])
+    except Distrito.DoesNotExist:
+        distrito = Distrito(nombre=x['distrito_nombre'], origin=AUDIT_ORIGIN)
+        distrito.resource_source = x['resource_source']
+        distrito.resource_url = x['resource_url']
+        distrito.save()
+
+    try:
+        bloque = Bloque.objects.get(nombre=x['bloque_nombre'])
+    except Bloque.DoesNotExist:
+        bloque = Bloque(nombre=x['bloque_nombre'], origin=AUDIT_ORIGIN)
+        bloque.resource_source = x['resource_source']
+        bloque.resource_url = x['resource_url']
+        bloque.save()
+
+    if x.get('partido_nombre'):
+        try:
+            partido = Partido.objects.get(nombre=x['partido_nombre'])
+        except Partido.DoesNotExist:
+            partido = Partido(nombre=x['partido_nombre'], origin=AUDIT_ORIGIN)
+            partido.resource_source = x['resource_source']
+            partido.resource_url = x['resource_url']
+            partido.save()
+    else:
+        partido = None
+
+    persona_created = True
+    try:
+        persona = Persona.objects.get(nombre=x['nombre'],
+                                            apellido=x['apellido'],
+                                            legislador__camara=ord(x['camara']),
+                                            legislador__bloque=bloque,
+                                            legislador__distrito=distrito,
+                                            legislador__inicio=isodate.parse_date(x['legislador_inicio']),
+                                            legislador__fin=isodate.parse_date(x['legislador_fin']))
+        persona_created = False
+    except Persona.DoesNotExist:
+        try:
+            persona = Persona.objects.get(nombre=x['nombre'], apellido=x['apellido'])
+            persona_created = False
+        except Persona.MultipleObjectsReturned:
+            log.error((u"This is an expected error! Aparently you have more than one Persona named: "
+                       u"%(apellido)s, %(nombre)s. You'll have to fix this by hand. Set var 'persona' "
+                       u"to the desired Persona instance and continue (c)") % x)
+            import ipdb; ipdb.set_trace()
+        except Persona.DoesNotExist:
+            persona = Persona(nombre=x['nombre'], apellido=x['apellido'], origin=AUDIT_ORIGIN)
+
+        try:
+            assert isinstance(persona, Persona)
+        except (NameError, AssertionError):
+            raise RuntimeError(u"Missing Persona, sorry, need to abort.")
+
+    persona.email = x.get('email') or None # the 'or None' thing is cuz we don't want empty strings.
+    persona.telefono = x.get('telefono') or None
+    persona.foto = x.get('foto_url') or None # <--- makes no sense, but we don't care right now.
+    persona.save()
+
+    if persona_created:
+        persona.resource_source = x['resource_source']
+        persona.resource_url = x['resource_url']
+        persona.resource_id = x['resource_id']
+        persona.save()
+        log.debug(u'Created %s Persona' % persona.uuid)
+    else:
+        log.debug(u'Updated %s Persona' % persona.uuid)
+
+    try:
+        legislador = Legislador.objects.get(persona=persona,
+                                      camara=ord(x['camara']),
+                                      bloque=bloque,
+                                      distrito=distrito,
+                                      inicio=isodate.parse_date(x['legislador_inicio']),
+                                      fin=isodate.parse_date(x['legislador_fin']))
+        log.debug(u'Updated %s Legislador' % legislador.uuid)
+    except Legislador.DoesNotExist:
+        legislador = Legislador(persona=persona,
+                          camara=ord(x['camara']),
+                          bloque=bloque,
+                          partido=partido,
+                          distrito=distrito,
+                          inicio=isodate.parse_date(x['legislador_inicio']),
+                          fin=isodate.parse_date(x['legislador_fin']))
+        legislador.resource_source = x['resource_source']
+        legislador.resource_url = x['resource_url']
+        legislador.resource_id = x['resource_id']
+        legislador.origin = AUDIT_ORIGIN
+        legislador.save()
+        log.debug(u'Created %s Legislador' % legislador.uuid)
+
+    return True
+
+def store_proyecto_item(x):
+    try:
+        p = Proyecto.objects.get(camara_origen_expediente=x['camara_origen_expediente'],
+                                 camara_origen=ord(x['camara_origen']))
+        proyecto_created = False
+    except Proyecto.DoesNotExist:
+        p = Proyecto(camara_origen_expediente=x['camara_origen_expediente'],
+                     camara_origen=ord(x['camara_origen']),
+                     origin=AUDIT_ORIGIN)
+        proyecto_created = True
+
+    p.resource_source = x['resource_source']
+    p.resource_url = x['resource_url']
+    p.resource_id = x['resource_id']
+
+    p.origen = ord(x['origen'])
+
+    p.camara_revisora = ord(x['camara_revisora']) if 'camara_revisora' in x else None
+    p.camara_revisora_expediente = x.get('camara_revisora_expediente') or ''
+
+    p.reproduccion_expediente = x.get('reproduccion_expediente') or ''
+
+    p.ley_numero = x.get('ley_numero')
+
+    p.tipo = ord(x['tipo'])
+    p.mensaje = x.get('mensaje_codigo') or ''
+
+    p.publicacion_en = x.get('publicacion_en') or ''
+    p.publicacion_fecha = isodate.parse_date(x['publicacion_fecha'])
+
+    p.texto_completo_url = x.get('texto_completo_url', '')
+    p.texto_mediasancion_senadores_url = x.get('texto_mediasancion_senadores_url', '')
+    p.texto_mediasancion_diputados_url = x.get('texto_mediasancion_diputados_url', '')
+
+    p.sumario = x['sumario']
+
+    p.save()
+
+    cd = x.get('comisiones_diputados', ())
+
+
+    for s in cd:
+        s = s.capitalize()
+        try:
+            c = Comision.objects.get(camara=ord('D'), nombre__iexact=s)
+        except Comision.DoesNotExist:
+            c = Comision(camara=ord('D'), nombre=s, origin=AUDIT_ORIGIN)
+            c.resource_source = x['resource_source']
+            c.resource_url = x['resource_url']
+            c.save()
+        if not c in p.comisiones.all():
+            p.comisiones.add(c)
+
+    for s in x.get('comisiones_senadores', ()):
+        s = s.capitalize()
+        try:
+            c = Comision.objects.get(camara=ord('S'), nombre__iexact=s)
+        except Comision.DoesNotExist:
+            c = Comision(camara=ord('S'), nombre=s, origin=AUDIT_ORIGIN)
+            c.resource_source = x['resource_source']
+            c.resource_url = x['resource_url']
+            c.save()
+        if not c in p.comisiones.all():
+            p.comisiones.add(c)
+
+    if proyecto_created:
+        log.debug(u'Created %s Proyecto' % p.uuid)
+        return True
+    else:
+        log.debug(u'Updated %s Proyecto' % p.uuid)
+        return True
+
+
+
+def store_firmaproyecto_item(x):
+    try:
+        proyecto = Proyecto.objects.get(camara_origen_expediente=x['proyecto_camara_origen_expediente'],
+                                        camara_origen=ord(x['proyecto_camara_origen']))
+    except Proyecto.DoesNotExist:
+        return False # queue for later upserting.
+
+    if x.get('firmante_bloque'):
+        try:
+            bloque = Bloque.objects.get(nombre=x['firmante_bloque'])
+        except Bloque.DoesNotExist:
+            bloque = Bloque(nombre=x['firmante_bloque'], origin=AUDIT_ORIGIN)
+            bloque.resource_source = x['resource_source']
+            bloque.resource_url = x['resource_url']
+            bloque.save()
+    else:
+        bloque = None
+
+    if x.get('firmante_distrito'):
+        try:
+            distrito = Distrito.objects.get(nombre=x['firmante_distrito'])
+        except Distrito.DoesNotExist:
+            distrito = Distrito(nombre=x['firmante_distrito'], origin=AUDIT_ORIGIN)
+            distrito.resource_source = x['resource_source']
+            distrito.resource_url = x['resource_url']
+            distrito.save()
+    else:
+        distrito = None
+
+    poder = ord(x['firmante_poder'])
+
+    firmante_special = x.get('firmante_special') or u''
+
+    if not firmante_special:
+        firmante_apellido = x.get('firmante_apellido') or u''
+        firmante_nombre = x.get('firmante_nombre') or u''
+
+        try:
+            persona = Persona.objects.get(apellido=firmante_apellido,
+                                                nombre=firmante_nombre)
+        except Persona.DoesNotExist:
+            persona = Persona(apellido=firmante_apellido,
+                                    nombre=firmante_nombre,
+                                    origin=AUDIT_ORIGIN)
+            persona.resource_source = x['resource_source']
+            persona.resource_url = x['resource_url']
+            persona.save()
+
+        try:
+            legislador = Legislador.objects.get(persona=persona,
+                                          bloque=bloque,
+                                          distrito=distrito)
+        except Legislador.DoesNotExist:
+            # if legislador created, inicio and fin will be missing. Whatever.
+            legislador = Legislador(persona=persona,
+                              bloque=bloque,
+                              distrito=distrito,
+                              camara=ord('?'),
+                              origin=AUDIT_ORIGIN)
+            legislador.resource_source = x['resource_source']
+            legislador.resource_url = x['resource_url']
+            legislador.save()
+    else:
+        persona = legislador = None
+
+    try:
+        fp = FirmaProyecto.objects.get(proyecto=proyecto,
+                                       legislador=legislador,
+                                       poder=poder,
+                                       poder_who=firmante_special,
+                                       tipo_firma=ord(x['tipo_firma']))
+        log.debug(u'Updated %s FirmaProyecto' % fp.uuid)
+    except FirmaProyecto.DoesNotExist:
+        fp = FirmaProyecto(proyecto=proyecto,
+                           legislador=legislador,
+                           poder=poder,
+                           poder_who=firmante_special,
+                           tipo_firma=ord(x['tipo_firma']),
+                           origin=AUDIT_ORIGIN)
+        fp.resource_source = x['resource_source']
+        fp.resource_url = x['resource_url']
+        fp.resource_id = x.get('resource_id')
+        fp.save()
+        log.debug(u'Created %s FirmaProyecto' % fp.uuid)
+
+    return True
+
+
+def store_item(t, x):
+    ts = {
+        'LegisladorItem': store_legislador_item,
+        'ProyectoItem': store_proyecto_item,
+        'FirmaProyectoItem': store_firmaproyecto_item }
+    try:
+        _store = ts[t]
+    except KeyError:
+        #log.debug(u"Skiping %s" % t)
+        return
+    else:
+        if _store(x):
+            debug_status['items_left'][t] -= 1
+            return True
+        else:
+            log.debug(u"Queued  %s" % t)
+            add_queue.append((t, x))
+            return False
+
+
+
+def main_load(lines):
+    log.info('Loading...')
+    for line in lines:
+         t, k = json.loads(line)
+         add_queue.append((t, k))
+         debug_status['items_left'][t] = debug_status['items_left'].get(t, 0) + 1
+    debug_status['items_total'] += len(add_queue)
+
+def main_upsert():
+    log.info('Upserting %d items...' % debug_status['items_total'])
+    while True:
+        if not add_queue:
+            log.info(u"Success!")
+            break
+        _t_add_queue, add_queue[:] = tuple(add_queue), []
+        nupdates = 0
+        for i in _t_add_queue:
+            if store_item(*i):
+                nupdates += 1
+        if nupdates == 0:
+            log.error(u"No item saved during last loop, aborting.")
+            break
+
+
+def _sighandle_pdb(sig, frame):
+    import pdb
+    pdb.Pdb().set_trace(frame)
+signal.signal(signal.SIGUSR1, _sighandle_pdb)
+
+def _sighandle_status(sig, frame):
+    d = debug_status
+    items_left_total = sum(d['items_left'].values())
+    items_done = d['items_total'] - items_left_total
+    runtime = time.time() - d['time_start']
+    s = u"| Status requested (SIGUSR2):\n"
+    for k,v in d['items_left'].items():
+        s += u"|   %s: %d left.\n" % (k, v)
+    s += u"|   ITEMS: Done %d - Left %d - Total %d\n" % (items_done, items_left_total, d['items_total'])
+    s += u"|   Runtime: %d seconds" % runtime
+    print >> sys.stderr, s
+signal.signal(signal.SIGUSR2, _sighandle_status)
+
+def parse_args():
+    parser = optparse.OptionParser(usage=u"usage: %prog [options] FILE [FILE..]")
+
+    parser.add_option('-v', '--verbose',
+                      action='store_true', dest='verbose',
+                      help=u"verbose output")
+    parser.add_option('--debug',
+                      action='store_true', dest='debug',
+                      help=u"debug output")
+    parser.add_option('--wtf',
+                      action='store_true', dest='wtf',
+                      help=u"enable WTF post-mortem debugger")
+
+    opts, args = parser.parse_args()
+
+    if not args:
+        parser.print_help()
+        sys.exit(1)
+
+    return opts, args
+
+
+if __name__ == '__main__':
+    opts, args = parse_args()
+
+    if opts.debug:
+        log.setLevel(logging.DEBUG)
+    elif opts.verbose:
+        log.setLevel(logging.INFO)
+
+    log.info('PID: %d' % os.getpid())
+    log.info('SIGUSR1: Start debugger.')
+    log.info('SIGUSR2: Print status.')
+
+    if opts.wtf:
+        log.info(u"WTF Post-mortem debugger enabled")
+
+    for fname in args:
+        with open(fname, 'rb') as f: # we use ascii-only input (JSON)
+            log.info(u"Opening %s..." % fname)
+            main_load(f)
+    try:
+        def _sort_key(x):
+            k = x[0]
+            try:
+                return ('LegisladorItem', 'ProyectoItem', 'FirmaProyectoItem').index(k)
+            except ValueError:
+                return 100
+        add_queue.sort(key=_sort_key)
+        main_upsert()
+    except Exception:
+        log.error(u"Something bad happened!!! Nothing will saved.")
+        if opts.wtf:
+            from wtf import WTF
+            WTF()
+        else:
+            raise

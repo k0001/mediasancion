@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block bodyid %}proyecto-detail-page{% endblock %}
+
+{% block content %}
+  <div id="proyecto">
+    <dl id="meta">
+      <dt id="camara_origen">{% trans "Cámara de Orígen" %}</dt>
+      <dd>{{ proyecto.get_camara_origen_display }}</dd>
+
+      <dt id="presentacion">{% trans "Publicación" %}</dt>
+      <dd>
+        {{ proyecto.publicacion_fecha|date:"DATE_FORMAT" }}
+        {% if proyecto.publicacion %}{{ proyecto.publicacion }}{% endif %}
+      </dd>
+    </dl>
+    <p id="summary" class="content-wrap">{{ proyecto.sumario }}</p>
+
+
+  </div>
+{% endblock %}

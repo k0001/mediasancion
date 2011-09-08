@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load utils_html %}
+
+{% block title %}{{ title }}{% endblock %}
+{% block htmltitle %}{{ title }}{% endblock %}
+
+{% block content %}
+    <ul id="legisladors">
+    {% for x in legislador_list %}
+        <li class="legislador" id="legislador-{{ x.id }}">
+            <img src="{{ x.foto_thumb_url }}" alt="thumb" />{{ x|objlink }}
+        </li>
+    {% endfor %}
+    </ul>
+{% endblock %}

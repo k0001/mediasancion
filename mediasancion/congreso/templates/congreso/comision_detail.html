@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load utils_html %}
+
+{% block title %}{{ comision }}{% endblock %}
+{% block htmltitle %}{{ comision|objlink }}{% endblock %}
+{% block htmlsubtitle %}Comisión de la Cámara de {{ comision.get_camara_display }}.{% endblock %}
+
+{% block content %}
+    {% if comision.descripcion %}
+      <div id="sumario">{{ comision.descripcion }}</div>
+    {% endif %}
+
+    <h3>Miembros</h3>
+    <ul id="miembros">
+      {% for mc in comision.membresiacomision_set.all %}
+      <li>{{ mc.legislador|objlink }} ({{ mc.get_cargo_display }})</li>
+      {% endfor %}
+    </ul>
+
+    <h3>Proyectos</h3>
+    <ul>
+      {% for p in comision.proyecto_set.all %}
+      <li>{{ p|objlink }}</li>
+      {% endfor %}
+    </ul>
+{% endblock %}

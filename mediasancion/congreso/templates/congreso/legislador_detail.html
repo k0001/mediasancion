@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load utils_html %}
+
+{% block title %}{{ legislador }}{% endblock %}
+{% block htmltitle %}{{ legislador|objlink }} ({{legislador.partido|objlink}}){% endblock %}
+
+{% block content %}
+    <img src="{{ MEDIA_URL }}{{ legislador.foto }}" />
+    <h2>{{ legislador.distrito }}</h2>
+    <h3>Proyectos</h3>
+    <dl>
+      <dt>Como firmante:</dt>
+      <dd>{{ legislador.stats.proyectos_firmante }}</dd>
+      <dt>Como cofirmante:</dt>
+      <dd>{{ legislador.stats.proyectos_cofirmante }}</dd>
+    </dl>
+    <h3>Comisiones</h3>
+    <ul>
+      {% for mc in legislador.membresiacomision_set.all %}
+      <li>{{mc.comision|objlink}} ({{mc.get_cargo_display}})</li>
+      {% endfor %}
+    </ul>
+{% endblock %}

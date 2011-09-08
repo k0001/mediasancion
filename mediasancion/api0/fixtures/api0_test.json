@@ -1,0 +1,204 @@
+[
+ {
+  "pk": 1, 
+  "model": "congreso.comision", 
+  "fields": {
+   "uuid": "b3b3f6c3-c9c9-4b7f-9a10-8f94756ee95d", 
+   "created_at": "2010-09-16 23:41:32", 
+   "remote_id": "", 
+   "updated_at": "2010-09-16 23:41:32", 
+   "remote_source": "", 
+   "descripcion": "bla bla", 
+   "nombre": "comision1", 
+   "slug": "comision1", 
+   "remote_url": "", 
+   "camara": "d"
+  }
+ }, 
+ {
+  "pk": 2, 
+  "model": "congreso.comision", 
+  "fields": {
+   "uuid": "8f5b0220-70e8-4912-bb16-533f115da467", 
+   "created_at": "2010-09-16 23:41:50", 
+   "remote_id": "", 
+   "updated_at": "2010-09-16 23:41:50", 
+   "remote_source": "", 
+   "descripcion": "asd", 
+   "nombre": "comision2", 
+   "slug": "comision2", 
+   "remote_url": "", 
+   "camara": "d"
+  }
+ }, 
+ {
+  "pk": 1, 
+  "model": "congreso.legislador", 
+  "fields": {
+   "mandato_inicio": "2010-01-16", 
+   "uuid": "a6b5c2a6-4027-4f99-8221-b2470ae7987a", 
+   "mandato_fin": "2070-09-16", 
+   "partido": 1, 
+   "telefono": "1234", 
+   "created_at": "2010-09-16 23:43:24", 
+   "remote_id": "", 
+   "updated_at": "2010-09-16 23:43:24", 
+   "email": "legislador1@mediasancion.org", 
+   "url": "http://mediasancion.org/test/legislador1", 
+   "remote_source": "", 
+   "foto": "", 
+   "nombre": "legislador1", 
+   "distrito": 1, 
+   "slug": "legislador1", 
+   "remote_url": "", 
+   "camara": "d"
+  }
+ }, 
+ {
+  "pk": 2, 
+  "model": "congreso.legislador", 
+  "fields": {
+   "mandato_inicio": "2010-01-16", 
+   "uuid": "aef2f84f-0d2e-4303-83d1-797e934be93d", 
+   "mandato_fin": "2145-09-16", 
+   "partido": 1, 
+   "telefono": "", 
+   "created_at": "2010-09-16 23:45:10", 
+   "remote_id": "", 
+   "updated_at": "2010-09-16 23:45:10", 
+   "email": "legislador2@mediasancion.org", 
+   "url": "", 
+   "remote_source": "", 
+   "foto": "", 
+   "nombre": "legislador2", 
+   "distrito": 2, 
+   "slug": "legislador2", 
+   "remote_url": "", 
+   "camara": "d"
+  }
+ }, 
+ {
+  "pk": 1, 
+  "model": "congreso.membresiacomision", 
+  "fields": {
+   "cargo": "P", 
+   "uuid": "61de1695-9905-4a43-a4d0-3b56f1de1cb1", 
+   "created_at": "2010-09-16 23:43:24", 
+   "remote_id": "", 
+   "updated_at": "2010-09-16 23:43:24", 
+   "legislador": 1, 
+   "comision": 1, 
+   "remote_source": "", 
+   "remote_url": ""
+  }
+ }, 
+ {
+  "pk": 2, 
+  "model": "congreso.membresiacomision", 
+  "fields": {
+   "cargo": "S", 
+   "uuid": "58f432a5-c913-4111-91d7-1ba4e5689763", 
+   "created_at": "2010-09-16 23:45:10", 
+   "remote_id": "", 
+   "updated_at": "2010-09-16 23:45:10", 
+   "legislador": 2, 
+   "comision": 1, 
+   "remote_source": "", 
+   "remote_url": ""
+  }
+ }, 
+ {
+  "pk": 1, 
+  "model": "congreso.proyecto", 
+  "fields": {
+   "camara_origen": "d", 
+   "uuid": "11b28928-6ca1-471f-a0ed-bb866ff92746", 
+   "codigo_expediente": "proyecto1", 
+   "fundamentos": "zz", 
+   "comisiones": [
+    1
+   ], 
+   "created_at": "2010-09-16 23:46:07", 
+   "remote_id": "", 
+   "updated_at": "2010-09-16 23:46:07", 
+   "texto": "yy", 
+   "remote_source": "", 
+   "sumario": "xx", 
+   "fecha": "2010-09-07", 
+   "remote_url": "", 
+   "tipo": "L"
+  }
+ }, 
+ {
+  "pk": 1, 
+  "model": "congreso.firmaproyecto", 
+  "fields": {
+   "tipo_firma": "F", 
+   "uuid": "e3b05f6d-41c6-454c-9041-47c978f708e2", 
+   "partido": 1, 
+   "created_at": "2010-09-16 23:46:07", 
+   "remote_id": "", 
+   "updated_at": "2010-09-16 23:46:07", 
+   "legislador": 1, 
+   "remote_source": "", 
+   "proyecto": 1, 
+   "remote_url": ""
+  }
+ }, 
+ {
+  "pk": 1, 
+  "model": "core.distrito", 
+  "fields": {
+   "uuid": "48a1168c-eb0b-4606-b496-2c8f00b07de5", 
+   "created_at": "2010-09-16 23:40:28", 
+   "remote_id": "", 
+   "updated_at": "2010-09-16 23:40:28", 
+   "remote_source": "", 
+   "nombre": "distrito1", 
+   "slug": "distrito1", 
+   "remote_url": ""
+  }
+ }, 
+ {
+  "pk": 2, 
+  "model": "core.distrito", 
+  "fields": {
+   "uuid": "7aa3504c-0376-48b6-9e90-037003c4f267", 
+   "created_at": "2010-09-16 23:40:33", 
+   "remote_id": "", 
+   "updated_at": "2010-09-16 23:40:33", 
+   "remote_source": "", 
+   "nombre": "distrito2", 
+   "slug": "distrito2", 
+   "remote_url": ""
+  }
+ }, 
+ {
+  "pk": 1, 
+  "model": "core.partidopolitico", 
+  "fields": {
+   "uuid": "0bb6585f-3d9b-49df-8a80-6c93bdeece75", 
+   "created_at": "2010-09-16 23:40:47", 
+   "remote_id": "", 
+   "updated_at": "2010-09-16 23:40:47", 
+   "remote_source": "", 
+   "nombre": "partido1", 
+   "slug": "partido1", 
+   "remote_url": ""
+  }
+ }, 
+ {
+  "pk": 2, 
+  "model": "core.partidopolitico", 
+  "fields": {
+   "uuid": "0b841907-b3f8-42b2-8a35-fd30c865f2af", 
+   "created_at": "2010-09-16 23:40:51", 
+   "remote_id": "", 
+   "updated_at": "2010-09-16 23:40:51", 
+   "remote_source": "", 
+   "nombre": "partido2", 
+   "slug": "partido2", 
+   "remote_url": ""
+  }
+ }
+]

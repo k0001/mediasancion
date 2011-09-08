@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load utils_html %}
+
+{% block title %}{{ title }}{% endblock %}
+{% block htmltitle %}{{ title }}{% endblock %}
+
+{% block content %}
+    <ul id="comisiones">
+    {% for x in comision_list %}
+        <li class="comision" id="comision-{{ x.id }}">
+            {{ x|objlink }}
+        </li>
+    {% endfor %}
+    </ul>
+{% endblock %}

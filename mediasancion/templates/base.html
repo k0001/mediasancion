@@ -1,0 +1,69 @@
+{% comment %}
+MediaSanción, aplicación web para acceder a los datos públicos de la
+actividad legislativa en Argentina.
+Copyright (C) 2010,2011 Renzo Carbonara <renzo @carbonara .com .ar>
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License as published by the Free
+Software Foundation, either version 3 of the License, or (at your option) any
+later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
+details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+
+{% load compress %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{% block headtitle %}{{ title }}{% endblock %} - Media Sanción</title>
+        {% block css %}
+          {% compress css %}
+            <link rel="stylesheet" type="text/css" media="all" href="{{ MEDIA_URL }}style/all.sass" charset="utf-8" />
+          {% endcompress %}
+        {% endblock %}
+        {% block js %}
+          <script type="application/javascript" src="{{ MEDIA_URL }}js/jquery-1.4.2.min.js"></script>
+          {% compress js %}
+            <script type="application/javascript" src="{{ MEDIA_URL }}js/header_search.js"></script>
+          {% endcompress %}
+        {% endblock %}
+        {% block head %}{% endblock %}
+    </head>
+    <body id="{% block bodyid %}{% endblock %}">
+      <div id="header-out">
+        <div id="header">
+          <img id="main-logo" src="{{ MEDIA_URL }}style/img/mediasancion_logo.png" />
+          {% include "_header_search.html" %}
+        </div>
+      </div>
+
+      <div id="nav-out">
+        <div id="nav">
+          <ul id="breadcrumbs">
+            {% for url,name in breadcrumbs %}
+              <li><a href="{{ url }}">{{ name }}</a></li>
+            {% endfor %}
+          </ul>
+          <h1><a href=".">{% block htmltitle %}{{ title }}{% endblock %}</a></h1>
+        </div>
+      </div>
+
+      <div id="content">{% block content %}{% endblock %}</div>
+
+      <div id="footer">
+        <ul class="links">
+          <li><a href="#">Contacto</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">API</a></li>
+          <li><a href="#">Acerca de MediaSanción</a></li>
+        </ul>
+      </div>
+
+    </body>
+</html>

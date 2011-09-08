@@ -1,0 +1,13 @@
+{{ object.get_tipo_display }}
+{{ object.codigo_expediente }}
+{{ object.get_camara_origen_display }}
+{{ object.mensaje }}
+{{ object.sumario }}
+{{ object.get_camara_origen_display }}
+{{ object.publicacion }}
+{{ object.publicacion_fecha|date:"F Y" }}
+
+{% for m in object.firmantes.all %}
+  {{ m.legislador.nombre }} {{ m.legislador.apellido }}
+  {{ m.partido.nombre }}
+{% endfor %}

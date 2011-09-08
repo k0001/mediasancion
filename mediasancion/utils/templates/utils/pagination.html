@@ -1,0 +1,13 @@
+{% load i18n %}
+
+{% if has_other_pages %}
+  <div class="pagination">
+      {% if has_previous %}
+        <a class="prev" href="?pag={{ previous_page_number }}">{{ previous_page_text }}</a>
+      {% endif %}
+      {% if has_next %}
+        <a class="next" href="?pag={{ next_page_number }}">{{ next_page_text }}</a>
+      {% endif %}
+  </div>
+{% endif %}
+
