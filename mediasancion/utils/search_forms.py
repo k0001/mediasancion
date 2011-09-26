@@ -32,7 +32,12 @@ class StandardSearchForm(SearchForm):
                     .encode('ascii', 'ignore').decode('ascii')
 
     def search(self):
-        self.clean()
+        if not self.is_valid():
+            return self.no_query_found()
+
+        if not self.cleaned_data.get('q'):
+            return self.no_query_found()
+
         sqs = self.searchqueryset.auto_query(self.q_nfkd).order_by('-pub_date')
 
         if self.load_all:
