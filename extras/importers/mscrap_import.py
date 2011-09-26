@@ -82,8 +82,8 @@ def store_legislador_item(x):
                                             legislador__camara=ord(x['camara']),
                                             legislador__bloque=bloque,
                                             legislador__distrito=distrito,
-                                            legislador__inicio=isodate.parse_date(x['legislador_inicio']),
-                                            legislador__fin=isodate.parse_date(x['legislador_fin']))
+                                            legislador__inicio=isodate.parse_date(x['mandato_inicio']),
+                                            legislador__fin=isodate.parse_date(x['mandato_fin']))
         persona_created = False
     except Persona.DoesNotExist:
         try:
@@ -121,8 +121,8 @@ def store_legislador_item(x):
                                       camara=ord(x['camara']),
                                       bloque=bloque,
                                       distrito=distrito,
-                                      inicio=isodate.parse_date(x['legislador_inicio']),
-                                      fin=isodate.parse_date(x['legislador_fin']))
+                                      inicio=isodate.parse_date(x['mandato_inicio']),
+                                      fin=isodate.parse_date(x['mandato_fin']))
         log.debug(u'Updated %s Legislador' % legislador.uuid)
     except Legislador.DoesNotExist:
         legislador = Legislador(persona=persona,
@@ -130,8 +130,8 @@ def store_legislador_item(x):
                           bloque=bloque,
                           partido=partido,
                           distrito=distrito,
-                          inicio=isodate.parse_date(x['legislador_inicio']),
-                          fin=isodate.parse_date(x['legislador_fin']))
+                          inicio=isodate.parse_date(x['mandato_inicio']),
+                          fin=isodate.parse_date(x['mandato_fin']))
         legislador.resource_source = x['resource_source']
         legislador.resource_url = x['resource_url']
         legislador.resource_id = x['resource_id']
@@ -311,7 +311,7 @@ def store_item(t, x):
     try:
         _store = ts[t]
     except KeyError:
-        #log.debug(u"Skiping %s" % t)
+        log.warning(u"Skiping %s" % t)
         return
     else:
         if _store(x):
