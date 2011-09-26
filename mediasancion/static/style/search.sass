@@ -19,7 +19,6 @@ form#search
   margin-top: 124px
   float: right
 
-  label[for=search-q],
   input#search-q
     font-size: 1.6em
     height: 32px
@@ -27,26 +26,20 @@ form#search
     text-align: right
     width: 240px
     background: $brand_color_light
-
+    color: white
+    border: none
     &:hover,
     &.highlight
       background: white
       cursor: text
       color: $brand_color_black
 
-  label[for=search-q]
-    position: absolute
-    z-index: 1
-    font-style: italic
-    color: $brand_color_dark
-    // These two values are for pixel perfection.
-    padding-top: 3px
-    height: 31px
+    [placeholder],
+    &::-webkit-input-placeholder,
+    &:-moz-placeholder
+      color: $brand_color_dark
+      font-style: italic
 
-  input#search-q
-    z-index: 2
-    color: white
-    border: none
 
 body#search-results-page
   #search-results
