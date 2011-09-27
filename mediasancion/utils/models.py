@@ -22,12 +22,18 @@ from datetime import datetime
 from django.db import models
 from django.conf import settings
 
-__all__ = 'UTCTimeAuditedAbstractModel', 'RemoteResourceAbstractModel', \
-          'OriginAuditedAbstractModel', 'StandardAbstractModel'
+from django_extensions.db.fields import (CreationDateTimeField,
+                                         ModificationDateTimeField,
+                                         UUIDField)
+
+__all__ = ('TimeAuditedAbstractModel', 'RemoteResourceAbstractModel',
+           'OriginAuditedAbstractModel', 'StandardAbstractModel')
+
 
 
 # This is not needed, but I'm so cool that I'm not letting you FAIL by setting
-# this to anything but 'UTC'
+# this to anything but 'UTC'. Also, TimeAuditedAbstractModel usage will be
+# clearer if we use UTC.
 assert settings.TIME_ZONE == 'UTC', """set settings.TIME_ZONE to 'UTC'
 WARNING Django's time zone handling is flawed.
 By setting TIME_ZONE='UTC', we guarantee that the datetimes Django store and
@@ -37,44 +43,42 @@ See http://code.djangoproject.com/ticket/10587
     http://code.djangoproject.com/ticket/2626"""
 
 
-class UTCTimeAuditedAbstractModel(models.Model):
+class TimeAuditedAbstractModel(models.Model):
     """
     Adds ``created_at`` and ``updated_at`` fields to the model.
 
-    ``created_at`` is populated only the very first time an object is saved with
-    the current UTC datetime.
+    ``created_at`` is populated only the very first time an object is saved
+    with the current local datetime (not tz-aware).
 
-    ``updated_at`` is updated on every save with the current UTC datetime.
+    ``updated_at`` is updated on every save with the current datetime (not
+    tz-aware)
     """
-    created_at = models.DateTimeField(editable=False, blank=True)
-    updated_at = models.DateTimeField(editable=False, blank=True)
+    created_at = CreationDateTimeField()
+    updated_at = ModificationDateTimeField()
 
     class Meta:
         abstract = True
 
-    def save(self, *args, **kwargs):
-        if self.pk is None:
-            self.created_at = datetime.utcnow()
-        self.updated_at = datetime.utcnow()
-        return super(UTCTimeAuditedAbstractModel, self).save(*args, **kwargs)
-
 
 class RemoteResourceAbstractModel(models.Model):
     """
-    Adds ``remote_source``, ``remote_url`` and ``remote_id`` optional fields to the model.
+    Adds ``remote_source``, ``remote_url`` and ``remote_id`` optional fields to
+    the model.
 
-    ``remote_source`` should specify the source from where the model info comes from.
-    Examples: 'Flickr', 'Twitter', 'Facebook'.
+    ``remote_source`` should specify the source from where the model info comes
+    from.  Examples: 'Flickr', 'Twitter', 'Facebook'.
 
-    ``remote_url`` should specify a URL for the resource on the remote source, if any.
-    Examples: 'http://somesource.com/resources/2', 'http://twitter.com/xxx/statuses/123'.
+    ``remote_url`` should specify a URL for the resource on the remote source,
+    if any.  Examples: 'http://somesource.com/resources/2',
+    'http://twitter.com/xxx/statuses/123'.
 
     ``remote_id`` should specify the ID for the resource on the remote source.
     Examples: '1234', 'some-resource', '0ad3fc294', 'urn:something...'
     """
 
     remote_source = models.CharField(max_length=255, blank=True)
-    remote_url = models.URLField(max_length=1023, verify_exists=False, blank=True)
+    remote_url = models.URLField(max_length=1023, verify_exists=False,
+                                 blank=True)
     remote_id = models.CharField(max_length=255, blank=True)
 
     class Meta:
@@ -98,7 +102,7 @@ class OriginAuditedAbstractModel(models.Model):
         abstract = True
 
 
-class StandardAbstractModel(UTCTimeAuditedAbstractModel,
+class StandardAbstractModel(TimeAuditedAbstractModel,
                             RemoteResourceAbstractModel,
                             OriginAuditedAbstractModel):
     """
