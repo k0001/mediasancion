@@ -32,17 +32,17 @@ from mediasancion.utils.models import StandardAbstractModel
 
 
 CAMARA_CHOICES = (
-    (ord('S'), _(u"senadores")),
-    (ord('D'), _(u"diputados")), )
+    ('S', _(u"senadores")),
+    ('D', _(u"diputados")), )
 CAMARA_CHOICES_DISPLAYS = dict(CAMARA_CHOICES)
 CAMARA_CHOICES_SLUGS = {
-    ord('S'): u'senadores',
-    ord('D'): u'diputados' }
+    'S': u'senadores',
+    'D': u'diputados' }
 
 
 class Comision(StandardAbstractModel):
     uuid = UUIDField(version=4, unique=True, db_index=True)
-    camara = models.IntegerField(choices=CAMARA_CHOICES)
+    camara = models.CharField(max_length=1, choices=CAMARA_CHOICES)
     nombre = models.CharField(max_length=255)
     descripcion = models.TextField(blank=True)
     slug = AutoSlugField(populate_from='nombre', overwrite=True)
@@ -72,7 +72,7 @@ class Comision(StandardAbstractModel):
 class Legislador(StandardAbstractModel):
     uuid = UUIDField(version=4, unique=True, db_index=True)
     persona = models.ForeignKey('core.Persona', null=True)
-    camara = models.IntegerField(choices=CAMARA_CHOICES) # ord('?') could mean we don't know.
+    camara = models.CharField(max_length=1, choices=CAMARA_CHOICES) # '?' could mean we don't know.
     # XXX inicio, fin, partido and distrito shouldn't be null, but we have some missing data.
     inicio = models.DateField(null=True)
     fin = models.DateField(null=True)
@@ -102,21 +102,21 @@ class Legislador(StandardAbstractModel):
 
 class MembresiaComision(StandardAbstractModel):
     CARGO_CHOICES = (
-        (ord('P'), _(u'presidente')),
-        (ord('Q'), _(u'vicepresidente 1ro')),
-        (ord('R'), _(u'vicepresidente 2do')),
-        (ord('S'), _(u'secretario')),
-        (ord('V'), _(u'vocal')), )
+        ('P', _(u'presidente')),
+        ('Q', _(u'vicepresidente 1ro')),
+        ('R', _(u'vicepresidente 2do')),
+        ('S', _(u'secretario')),
+        ('V', _(u'vocal')), )
 
     uuid = UUIDField(version=4, unique=True, db_index=True)
     legislador = models.ForeignKey(Legislador, null=True)
     comision = models.ForeignKey(Comision)
-    cargo = models.IntegerField(choices=CARGO_CHOICES)
+    cargo = models.CharField(max_length=1, choices=CARGO_CHOICES)
 
 
 class Reunion(StandardAbstractModel):
     uuid = UUIDField(version=4, unique=True, db_index=True)
-    camara = models.IntegerField(choices=CAMARA_CHOICES)
+    camara = models.CharField(max_length=1, choices=CAMARA_CHOICES)
     nro_periodo = models.IntegerField()
     nro_reunion = models.IntegerField()
     titulo = models.CharField(max_length=128)
@@ -125,41 +125,41 @@ class Reunion(StandardAbstractModel):
 
 class AsistenciaReunion(StandardAbstractModel):
     ASISTENCIA_CHOICES = (
-        (ord('P'), _(u'presente')),
-        (ord('A'), _(u'ausente con aviso')),
-        (ord('L'), _(u'licencia')),
-        (ord('M'), _(u'mision Oficial')), )
+        ('P', _(u'presente')),
+        ('A', _(u'ausente con aviso')),
+        ('L', _(u'licencia')),
+        ('M', _(u'mision oficial')), )
 
     uuid = UUIDField(version=4, unique=True, db_index=True)
     reunion = models.ForeignKey(Reunion)
     legislador = models.ForeignKey(Legislador, null=True)
-    asistencia = models.IntegerField(choices=ASISTENCIA_CHOICES)
+    asistencia = models.CharField(max_length=1, choices=ASISTENCIA_CHOICES)
 
 
 class Proyecto(StandardAbstractModel):
     TIPO_CHOICES = (
-        (ord('L'), _(u'ley')),
-        (ord('D'), _(u'declaración')),
-        (ord('R'), _(u'resolución')),
-        (ord('C'), _(u'comunicación')),
-        (ord('E'), _(u'decreto')),
-        (ord('M'), _(u'mensaje')), )
+        ('L', _(u'ley')),
+        ('D', _(u'declaración')),
+        ('R', _(u'resolución')),
+        ('C', _(u'comunicación')),
+        ('E', _(u'decreto')),
+        ('M', _(u'mensaje')), )
 
     ORIGEN_CHOICE = (
-        (ord('S'), _(u"cámara de senadores")),
-        (ord('D'), _(u"cámara de diputados")),
-        (ord('E'), _(u"poder ejecutivo")),
-        (ord('J'), _(u"jefe de gabinete")),
-        (ord('O'), _(u"organismos oficiales")),
-        (ord('P'), _(u"particular")), )
+        ('S', _(u"cámara de senadores")),
+        ('D', _(u"cámara de diputados")),
+        ('E', _(u"poder ejecutivo")),
+        ('J', _(u"jefe de gabinete")),
+        ('O', _(u"organismos oficiales")),
+        ('P', _(u"particular")), )
 
     uuid = UUIDField(version=4, unique=True, db_index=True)
-    origen = models.IntegerField(choices=ORIGEN_CHOICE)
-    camara_origen = models.IntegerField(choices=CAMARA_CHOICES)
+    origen = models.CharField(max_length=1, choices=ORIGEN_CHOICE)
+    camara_origen = models.CharField(max_length=1, choices=CAMARA_CHOICES)
     camara_origen_expediente = models.CharField(max_length=15)
-    camara_revisora = models.IntegerField(choices=CAMARA_CHOICES, null=True, blank=True)
+    camara_revisora = models.CharField(max_length=1, choices=CAMARA_CHOICES, null=True, blank=True)
     camara_revisora_expediente = models.CharField(max_length=15)
-    tipo = models.IntegerField(choices=TIPO_CHOICES)
+    tipo = models.CharField(max_length=1, choices=TIPO_CHOICES)
     tipo_verbose = models.CharField(max_length=255)
     mensaje = models.CharField(max_length=15)
     sumario = models.TextField(blank=True)
@@ -199,18 +199,18 @@ class Proyecto(StandardAbstractModel):
 
 class FirmaProyecto(StandardAbstractModel):
     TIPO_FIRMA_CHOICES = (
-        (ord('F'), _(u'Firmante')),
-        (ord('C'), _(u'Cofirmante')), )
+        ('F', _(u'Firmante')),
+        ('C', _(u'Cofirmante')), )
 
     PODER_CHOICES = (
-        (ord('L'), _(u"legislativo")),
-        (ord('E'), _(u"ejecutivo")), )
+        ('L', _(u"legislativo")),
+        ('E', _(u"ejecutivo")), )
 
     uuid = UUIDField(version=4, unique=True, db_index=True)
-    poder = models.IntegerField(choices=PODER_CHOICES)
+    poder = models.CharField(max_length=1, choices=PODER_CHOICES)
     legislador = models.ForeignKey(Legislador, null=True) # null if poder ejecutivo, probably
     proyecto = models.ForeignKey(Proyecto)
-    tipo_firma = models.IntegerField(choices=TIPO_FIRMA_CHOICES)
+    tipo_firma = models.CharField(max_length=1, choices=TIPO_FIRMA_CHOICES)
 
     # XXX REMOVE THIS FIELD: Well, not sure if it can be done, but maybe once we have a Personaa model
     poder_who =  models.CharField(max_length=255, blank=True)

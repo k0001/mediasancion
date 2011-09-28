@@ -170,7 +170,7 @@ class PersonaRestsource(Restsource):
         if request.REQUEST.get('apellido'):
             queryset = queryset.filter(apellido__icontains=request.REQUEST['apellido'])
         if request.REQUEST.get('documento_tipo'):
-            queryset = queryset.filter(documento_tipo=ord(request.REQUEST['documento_tipo']))
+            queryset = queryset.filter(documento_tipo=request.REQUEST['documento_tipo'])
         if request.REQUEST.get('documento_numero'):
             queryset = queryset.filter(documento_numero=request.REQUEST['documento_numero'])
         if request.REQUEST.get('email'):

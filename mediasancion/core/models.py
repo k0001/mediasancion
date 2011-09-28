@@ -93,13 +93,13 @@ class Bloque(StandardAbstractModel):
 
 class Persona(StandardAbstractModel):
     TIPO_DOCUMENTO_CHOICES = (
-        (ord('D'), _(u"D.N.I.")), )
+        ('D', _(u"D.N.I.")), )
 
     uuid = UUIDField(version=4, unique=True, db_index=True)
     slug = AutoSlugField(populate_from=('apellido', 'nombre'), overwrite=True)
     nombre = models.CharField(max_length=128)
     apellido = models.CharField(max_length=128)
-    documento_tipo = models.IntegerField(choices=TIPO_DOCUMENTO_CHOICES, null=True, blank=True)
+    documento_tipo = models.CharField(max_length=1, choices=TIPO_DOCUMENTO_CHOICES, null=True, blank=True)
     documento_numero = models.CharField(max_length=63, null=True, blank=True)
     email = models.EmailField(blank=True, null=True)
     telefono = models.CharField(max_length=32, blank=True, null=True)

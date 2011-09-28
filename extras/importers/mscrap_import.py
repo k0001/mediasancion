@@ -79,7 +79,7 @@ def store_legislador_item(x):
     try:
         persona = Persona.objects.get(nombre=x['nombre'],
                                             apellido=x['apellido'],
-                                            legislador__camara=ord(x['camara']),
+                                            legislador__camara=x['camara'],
                                             legislador__bloque=bloque,
                                             legislador__distrito=distrito,
                                             legislador__inicio=isodate.parse_date(x['mandato_inicio']),
@@ -118,7 +118,7 @@ def store_legislador_item(x):
 
     try:
         legislador = Legislador.objects.get(persona=persona,
-                                      camara=ord(x['camara']),
+                                      camara=x['camara'],
                                       bloque=bloque,
                                       distrito=distrito,
                                       inicio=isodate.parse_date(x['mandato_inicio']),
@@ -126,7 +126,7 @@ def store_legislador_item(x):
         log.debug(u'Updated %s Legislador' % legislador.uuid)
     except Legislador.DoesNotExist:
         legislador = Legislador(persona=persona,
-                          camara=ord(x['camara']),
+                          camara=x['camara'],
                           bloque=bloque,
                           partido=partido,
                           distrito=distrito,
@@ -144,11 +144,11 @@ def store_legislador_item(x):
 def store_proyecto_item(x):
     try:
         p = Proyecto.objects.get(camara_origen_expediente=x['camara_origen_expediente'],
-                                 camara_origen=ord(x['camara_origen']))
+                                 camara_origen=x['camara_origen'])
         proyecto_created = False
     except Proyecto.DoesNotExist:
         p = Proyecto(camara_origen_expediente=x['camara_origen_expediente'],
-                     camara_origen=ord(x['camara_origen']),
+                     camara_origen=x['camara_origen'],
                      origin=AUDIT_ORIGIN)
         proyecto_created = True
 
@@ -156,16 +156,16 @@ def store_proyecto_item(x):
     p.resource_url = x['resource_url']
     p.resource_id = x['resource_id']
 
-    p.origen = ord(x['origen'])
+    p.origen = x['origen']
 
-    p.camara_revisora = ord(x['camara_revisora']) if 'camara_revisora' in x else None
+    p.camara_revisora = x['camara_revisora'] if 'camara_revisora' in x else None
     p.camara_revisora_expediente = x.get('camara_revisora_expediente') or ''
 
     p.reproduccion_expediente = x.get('reproduccion_expediente') or ''
 
     p.ley_numero = x.get('ley_numero')
 
-    p.tipo = ord(x['tipo'])
+    p.tipo = x['tipo']
     p.mensaje = x.get('mensaje_codigo') or ''
 
     p.publicacion_en = x.get('publicacion_en') or ''
@@ -185,9 +185,9 @@ def store_proyecto_item(x):
     for s in cd:
         s = s.capitalize()
         try:
-            c = Comision.objects.get(camara=ord('D'), nombre__iexact=s)
+            c = Comision.objects.get(camara='D', nombre__iexact=s)
         except Comision.DoesNotExist:
-            c = Comision(camara=ord('D'), nombre=s, origin=AUDIT_ORIGIN)
+            c = Comision(camara='D', nombre=s, origin=AUDIT_ORIGIN)
             c.resource_source = x['resource_source']
             c.resource_url = x['resource_url']
             c.save()
@@ -197,9 +197,9 @@ def store_proyecto_item(x):
     for s in x.get('comisiones_senadores', ()):
         s = s.capitalize()
         try:
-            c = Comision.objects.get(camara=ord('S'), nombre__iexact=s)
+            c = Comision.objects.get(camara='S', nombre__iexact=s)
         except Comision.DoesNotExist:
-            c = Comision(camara=ord('S'), nombre=s, origin=AUDIT_ORIGIN)
+            c = Comision(camara='S', nombre=s, origin=AUDIT_ORIGIN)
             c.resource_source = x['resource_source']
             c.resource_url = x['resource_url']
             c.save()
@@ -218,7 +218,7 @@ def store_proyecto_item(x):
 def store_firmaproyecto_item(x):
     try:
         proyecto = Proyecto.objects.get(camara_origen_expediente=x['proyecto_camara_origen_expediente'],
-                                        camara_origen=ord(x['proyecto_camara_origen']))
+                                        camara_origen=x['proyecto_camara_origen'])
     except Proyecto.DoesNotExist:
         return False # queue for later upserting.
 
@@ -244,7 +244,7 @@ def store_firmaproyecto_item(x):
     else:
         distrito = None
 
-    poder = ord(x['firmante_poder'])
+    poder =x['firmante_poder']
 
     firmante_special = x.get('firmante_special') or u''
 
@@ -272,7 +272,7 @@ def store_firmaproyecto_item(x):
             legislador = Legislador(persona=persona,
                               bloque=bloque,
                               distrito=distrito,
-                              camara=ord('?'),
+                              camara='?',
                               origin=AUDIT_ORIGIN)
             legislador.resource_source = x['resource_source']
             legislador.resource_url = x['resource_url']
@@ -285,14 +285,14 @@ def store_firmaproyecto_item(x):
                                        legislador=legislador,
                                        poder=poder,
                                        poder_who=firmante_special,
-                                       tipo_firma=ord(x['tipo_firma']))
+                                       tipo_firma=x['tipo_firma'])
         log.debug(u'Updated %s FirmaProyecto' % fp.uuid)
     except FirmaProyecto.DoesNotExist:
         fp = FirmaProyecto(proyecto=proyecto,
                            legislador=legislador,
                            poder=poder,
                            poder_who=firmante_special,
-                           tipo_firma=ord(x['tipo_firma']),
+                           tipo_firma=x['tipo_firma'],
                            origin=AUDIT_ORIGIN)
         fp.resource_source = x['resource_source']
         fp.resource_url = x['resource_url']
