@@ -28,7 +28,7 @@ class ProyectoIndex(StandardSearchIndex):
     tipo = indexes.CharField(model_attr='tipo')
     pub_date = indexes.DateField(model_attr='publicacion_fecha')
 
-    def get_queryset(self):
+    def index_queryset(self):
         return Proyecto.objects.filter(camara_origen__in=['S','D'])
 
 
