@@ -190,7 +190,7 @@ class Proyecto(StandardAbstractModel):
 
     @models.permalink
     def get_absolute_url(self):
-        return self.get_origen_absolute_url()
+        return self.get_origen_pov_absolute_url()
 
     @models.permalink
     def get_origen_pov_absolute_url(self):
