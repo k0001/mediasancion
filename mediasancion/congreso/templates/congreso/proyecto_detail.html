@@ -15,8 +15,9 @@
 {% endif %}
 
 {% block content %}
-  <div id="proyecto">
-    <dl id="meta">
+  <article id="proyecto">
+
+    <section id="meta">
       <dt id="camara_origen">{% trans "Cámara de Orígen" %}</dt>
       <dd>{{ proyecto.get_camara_origen_display|capfirst }}</dd>
       <dt id="camara_origen_expediente">
@@ -41,15 +42,13 @@
         </dd>
       {% endif %}
 
-
       <dt id="presentacion">{% trans "Publicación" %}</dt>
       <dd>
         {{ proyecto.publicacion_fecha|date:"DATE_FORMAT" }}
         {% if proyecto.publicacion %}{{ proyecto.publicacion }}{% endif %}
       </dd>
-    </dl>
+    </section>
+
     <p id="summary" class="content-wrap">{{ proyecto.sumario }}</p>
-
-
-  </div>
+  </article>
 {% endblock %}
