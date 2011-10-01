@@ -113,7 +113,7 @@ class Persona(StandardAbstractModel):
 
     @property
     def full_name(self):
-        return u'%s, %s' % (self.nombre, self.apellido)
+        return u'%s, %s' % (self.apellido, self.nombre)
 
     def __unicode__(self):
         return self.full_name
