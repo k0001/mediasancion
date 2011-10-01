@@ -3,7 +3,6 @@ South==0.7.3
 django-extensions
 psycopg2
 PIL
-django-css==2.3.1
 BeautifulSoup==3.2.0
 
 -e git://github.com/k0001/django-restsources.git@46d1f64#egg=django-restsources

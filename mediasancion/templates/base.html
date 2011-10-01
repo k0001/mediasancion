@@ -23,9 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <head>
         <title>{% block headtitle %}{{ title }}{% endblock %} - Media Sanción</title>
         {% block css %}
-          {% compress css %}
-            <link rel="stylesheet" type="text/css" media="all" href="{{ MEDIA_URL }}style/all.sass" charset="utf-8" />
-          {% endcompress %}
+            <link rel="stylesheet" type="text/css" media="all" href="{{ MEDIA_URL }}style/all.css" charset="utf-8" />
         {% endblock %}
         {% block js %}
           <script type="application/javascript" src="{{ MEDIA_URL }}js/jquery-1.4.2.min.js"></script>

@@ -1,0 +1,156 @@
+@charset "UTF-8";
+/* MediaSanción, aplicación web para acceder a los datos públicos de la
+ * actividad legislativa en Argentina.
+ * Copyright (C) 2010,2011 Renzo Carbonara <renzo @carbonara .com .ar>
+ *
+ * This program is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU Affero General Public License as published by the Free
+ * Software Foundation, either version 3 of the License, or (at your option) any
+ * later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU Affero General Public License for more
+ * details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>. */
+/* START code from http://github.com/handcrafted/handcrafted-compass-mixins */
+/* END code from http://github.com/handcrafted/handcrafted-compass-mixins */
+html * {
+  margin: 0;
+  padding: 0; }
+
+body {
+  font-family: "Liberation Sans", sans;
+  background: #ddd8d1; }
+  body a:link, body a:visited, body a:hover {
+    text-decoration: none;
+    color: inherit; }
+
+#header-out {
+  background: #009cb8; }
+  #header-out #header {
+    background-color: #00bcdd;
+    width: 960px;
+    margin: auto; }
+    #header-out #header img#main-logo {
+      margin-left: 8px;
+      margin-top: 120px;
+      margin-bottom: 8px; }
+
+#nav-out {
+  background: #3b3b3b; }
+  #nav-out #nav {
+    width: 960px;
+    margin: auto; }
+    #nav-out #nav h1 {
+      font-family: "Trebuchet MS";
+      padding-right: 4px;
+      padding-bottom: 8px;
+      text-align: right;
+      vertical-align: bottom;
+      font-size: 3em;
+      color: white;
+      clear: both; }
+      #nav-out #nav h1 span {
+        color: #095e6d;
+        font-size: 0.8em; }
+    #nav-out #nav ul#breadcrumbs {
+      padding-right: 4px;
+      padding-top: 4px;
+      font-family: "Verdana", sans;
+      text-align: right;
+      list-style: none;
+      min-height: 32px; }
+      #nav-out #nav ul#breadcrumbs li {
+        color: white;
+        text-transform: uppercase;
+        display: inline;
+        font-size: 0.7em; }
+        #nav-out #nav ul#breadcrumbs li:after {
+          padding-left: 12px;
+          padding-right: 8px;
+          content: "»";
+          color: #00bcdd; }
+        #nav-out #nav ul#breadcrumbs li:last-child:after {
+          padding-right: 0;
+          padding-left: 0;
+          content: ""; }
+
+#content {
+  background: #f3ece2;
+  width: 960px;
+  height: auto;
+  margin: auto; }
+  #content a:link, #content a:visited, #content a:hover {
+    color: #095e6d; }
+  #content .content-wrap {
+    padding: 8px; }
+
+#footer {
+  width: 960px;
+  margin: auto;
+  margin-top: 48px;
+  margin-bottom: 30px;
+  text-align: center;
+  font-size: 0.9em;
+  color: #474747; }
+  #footer ul.links {
+    list-style: none; }
+    #footer ul.links li {
+      display: inline;
+      text-transform: uppercase;
+      font-size: 0.7em; }
+      #footer ul.links li:after {
+        padding-left: 10px;
+        padding-right: 10px;
+        content: "·"; }
+      #footer ul.links li:last-child:after {
+        padding-left: 0;
+        padding-right: 0;
+        content: ""; }
+
+form#search {
+  margin-top: 124px;
+  float: right; }
+  form#search input#search-q {
+    font-size: 1.6em;
+    height: 32px;
+    padding: 2px 8px;
+    text-align: right;
+    width: 240px;
+    background: #11cdee;
+    color: white;
+    border: none; }
+    form#search input#search-q:hover, form#search input#search-q.highlight {
+      background: white;
+      cursor: text;
+      color: #3b3b3b; }
+    form#search input#search-q [placeholder], form#search input#search-q::-webkit-input-placeholder, form#search input#search-q:-moz-placeholder {
+      color: #009cb8;
+      font-style: italic; }
+
+body#search-results-page #search-results .proyecto {
+  margin-top: 1em; }
+  body#search-results-page #search-results .proyecto:first-child {
+    margin-top: 0; }
+  body#search-results-page #search-results .proyecto .summary {
+    color: #838383;
+    font-size: 0.9em; }
+
+body#proyecto-detail-page article#proyecto p#summary {
+  font-size: 1.1em; }
+body#proyecto-detail-page article#proyecto section#meta {
+  float: right;
+  text-align: right;
+  background-color: #ddd8d1;
+  width: 240px;
+  padding: 8px;
+  margin-left: 8px; }
+  body#proyecto-detail-page article#proyecto section#meta dt {
+    color: #838383;
+    font-size: 0.9em; }
+  body#proyecto-detail-page article#proyecto section#meta dd {
+    font-weight: bold;
+    color: #3b3b3b; }

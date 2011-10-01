@@ -131,7 +131,6 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
     'django_extensions',
     'south',
-    'compressor', # <- django-css
     'haystack',
     'mediasancion.api0',
     'mediasancion.core',
@@ -139,17 +138,6 @@ INSTALLED_APPS = (
     'mediasancion.utils',
 )
 
-# For django-css (http://github.com/dziegler/django-css)
-COMPILER_FORMATS = {
-    '.sass': {
-        'binary_path': 'sass -t compressed',
-        'arguments': '*.sass *.css',
-    },
-    '.scss': {
-        'binary_path': 'sass -t compressed --scss',
-        'arguments': '*.scss *.css',
-    }
-}
 
 HAYSTACK_SITECONF = 'mediasancion.search_sites'
 HAYSTACK_SEARCH_ENGINE = 'xapian'
