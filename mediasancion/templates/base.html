@@ -17,7 +17,6 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {% endcomment %}
 
-{% load compress %}
 <!DOCTYPE html>
 <html>
     <head>
@@ -28,9 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         {% block js %}
           <script type="application/javascript" src="{{ MEDIA_URL }}js/jquery-1.4.2.min.js"></script>
           <script type="application/javascript" src="{{ MEDIA_URL }}js/modernizr-2.0.6.js"></script>
-          {% compress js %}
-            <script type="application/javascript" src="{{ MEDIA_URL }}js/header_search.js"></script>
-          {% endcompress %}
+          <script type="application/javascript" src="{{ MEDIA_URL }}js/header_search.js"></script>
         {% endblock %}
         {% block head %}{% endblock %}
     </head>
