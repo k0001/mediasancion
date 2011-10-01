@@ -178,13 +178,28 @@ class Proyecto(StandardAbstractModel):
         unique_together = ('camara_origen', 'camara_origen_expediente'),
 
     def __unicode__(self):
-        return _(u"Proyecto de %(tipo)s %(camara_origen_expediente)s") % {
+        if self.camara_revisora:
+            camara_revisora_text = u" → %s" % self.camara_revisora_expediente
+        else:
+            camara_revisora_text = u""
+        return (u"Proyecto de %(tipo)s %(camara_origen_expediente)s"
+                u"%(camara_revisora_text)s") % {
                         'tipo': self.get_tipo_display().capitalize(),
-                        'camara_origen_expediente': self.camara_origen_expediente }
+                        'camara_origen_expediente': self.camara_origen_expediente,
+                        'camara_revisora_text': camara_revisora_text }
 
     @models.permalink
     def get_absolute_url(self):
+        return self.get_origen_absolute_url()
+
+    @models.permalink
+    def get_origen_pov_absolute_url(self):
         return 'congreso:%s:proyectos:detail' % self.camara_origen_slug, (self.camara_origen_expediente,)
+
+    @models.permalink
+    def get_revisora_pov_absolute_url(self):
+        if self.camara_revisora:
+            return 'congreso:%s:proyectos:detail' % self.camara_revisora_slug, (self.camara_revisora_expediente,)
 
     @property
     @models.permalink
@@ -195,6 +210,11 @@ class Proyecto(StandardAbstractModel):
     @property
     def camara_origen_slug(self):
         return CAMARA_CHOICES_SLUGS[self.camara_origen]
+
+    @property
+    def camara_revisora_slug(self):
+        if self.camara_revisora:
+            return CAMARA_CHOICES_SLUGS[self.camara_revisora]
 
 
 class FirmaProyecto(StandardAbstractModel):

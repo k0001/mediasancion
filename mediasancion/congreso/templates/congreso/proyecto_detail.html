@@ -1,13 +1,46 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load utils_html %}
 
 {% block bodyid %}proyecto-detail-page{% endblock %}
+
+{% if proyecto.camara_revisora %}
+  {% block htmlsubtitle %}
+    {% if not origen_pov %}
+      {% blocktrans with expediente=proyecto.camara_origen_expediente|textlink:proyecto.get_origen_pov_absolute_url %}
+        Revisión de {{ expediente }}
+      {% endblocktrans %}
+    {% endif %}
+  {% endblock %}
+{% endif %}
 
 {% block content %}
   <div id="proyecto">
     <dl id="meta">
       <dt id="camara_origen">{% trans "Cámara de Orígen" %}</dt>
-      <dd>{{ proyecto.get_camara_origen_display }}</dd>
+      <dd>{{ proyecto.get_camara_origen_display|capfirst }}</dd>
+      <dt id="camara_origen_expediente">
+        {% blocktrans with camara=proyecto.get_camara_origen_display|capfirst %}
+          Expediente en {{ camara }}
+        {% endblocktrans %}
+      </dt>
+      <dd>
+        <a href="{{ proyecto.get_origen_pov_absolute_url }}">{{ proyecto.camara_origen_expediente }}</a>
+      </dd>
+
+      {% if proyecto.camara_revisora %}
+        <dt id="camara_origen">{% trans "Cámara Revisora" %}</dt>
+        <dd>{{ proyecto.get_camara_revisora_display|capfirst }}</dd>
+        <dt id="camara_revisora_expediente">
+          {% blocktrans with camara=proyecto.get_camara_revisora_display|capfirst %}
+            Expediente en {{ camara }}
+          {% endblocktrans %}
+        </dt>
+        <dd>
+          <a href="{{ proyecto.get_revisora_pov_absolute_url }}">{{ proyecto.camara_revisora_expediente }}</a>
+        </dd>
+      {% endif %}
+
 
       <dt id="presentacion">{% trans "Publicación" %}</dt>
       <dd>

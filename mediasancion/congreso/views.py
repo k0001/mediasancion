@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+from django.db.models import Q
 from django.http import Http404
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404, render_to_response
@@ -57,32 +58,42 @@ def proyecto_list(request, camara=None):
             (reverse('congreso:%s:detail' % CAMARA_CHOICES_SLUGS[camara]),
                  CAMARA_CHOICES_DISPLAYS[camara]))
 
-    c = {
-        'title': _(u"Proyectos"),
-        'breadcrumbs': breadcrumbs,
-        'page': page }
+    c = { 'title': _(u"Proyectos"),
+          'breadcrumbs': breadcrumbs,
+          'page': page }
 
     return render_to_response('congreso/proyecto_list.html', c,
                               context_instance=RequestContext(request))
 
 def proyecto_detail(request, camara, expediente):
-    # no hay necesidad de filtrar por `camara` también, `codigo_expediente` es UNIQUE
-    proyecto = get_object_or_404(Proyecto, codigo_expediente=expediente)
+    proyecto = get_object_or_404(Proyecto,
+             Q(camara_origen=camara,
+               camara_origen_expediente=expediente) |
+             Q(camara_revisora=camara,
+               camara_revisora_expediente=expediente))
+
+    # Since a Proyecto might be seen from either the originating camara or the
+    # reviewing camara point of views, we keep the current point of view
+    # explicit to later alter the content presentation for that context.
+    origen_pov = proyecto.camara_origen == camara
 
     breadcrumbs = (
-        (reverse('congreso:%s:detail' % proyecto.camara_origen_slug),
-            proyecto.get_camara_origen_display()),
-        (reverse('congreso:%s:proyectos:list' % proyecto.camara_origen_slug),
+        (reverse('congreso:%s:detail' % CAMARA_CHOICES_SLUGS[camara]),
+            CAMARA_CHOICES_DISPLAYS[camara]),
+        (reverse('congreso:%s:proyectos:list' % CAMARA_CHOICES_SLUGS[camara]),
             _(u"Proyectos")), )
 
-    c = {
-        'title': unicode(proyecto),
-        'breadcrumbs': breadcrumbs,
-        'proyecto': proyecto }
+    title = _(u"Proyecto de %(tipo)s %(expediente)s") % {
+                    'tipo': proyecto.get_tipo_display().capitalize(),
+                    'expediente': expediente }
+
+    c = { 'title': title,
+          'breadcrumbs': breadcrumbs,
+          'proyecto': proyecto,
+          'origen_pov': origen_pov }
 
     return render_to_response('congreso/proyecto_detail.html', c,
                               context_instance=RequestContext(request))
-
 
 
 
