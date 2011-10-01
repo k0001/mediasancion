@@ -188,7 +188,6 @@ class Proyecto(StandardAbstractModel):
                         'camara_origen_expediente': self.camara_origen_expediente,
                         'camara_revisora_text': camara_revisora_text }
 
-    @models.permalink
     def get_absolute_url(self):
         return self.get_origen_pov_absolute_url()
 
