@@ -36,17 +36,18 @@ body {
     margin: auto; }
     #header-out #header img#main-logo {
       margin-left: 8px;
-      margin-top: 120px;
-      margin-bottom: 8px; }
+      margin-top: 64px;
+      margin-bottom: 24px; }
 
 #nav-out {
-  background: #3b3b3b; }
+  background: #373737; }
   #nav-out #nav {
+    background: #3b3b3b;
     width: 960px;
     margin: auto; }
     #nav-out #nav h1 {
       font-family: "Trebuchet MS";
-      padding-right: 4px;
+      padding-right: 8px;
       padding-bottom: 8px;
       text-align: right;
       vertical-align: bottom;
@@ -57,21 +58,20 @@ body {
         color: #095e6d;
         font-size: 0.8em; }
     #nav-out #nav ul#breadcrumbs {
-      padding-right: 4px;
-      padding-top: 4px;
+      padding-right: 8px;
+      padding-top: 8px;
       font-family: "Verdana", sans;
       text-align: right;
       list-style: none;
-      min-height: 32px; }
+      min-height: 24px; }
       #nav-out #nav ul#breadcrumbs li {
         color: white;
         text-transform: uppercase;
         display: inline;
         font-size: 0.7em; }
         #nav-out #nav ul#breadcrumbs li:after {
-          padding-left: 12px;
-          padding-right: 8px;
-          content: "»";
+          padding-left: 4px;
+          content: "→";
           color: #00bcdd; }
         #nav-out #nav ul#breadcrumbs li:last-child:after {
           padding-right: 0;
@@ -112,7 +112,7 @@ body {
         content: ""; }
 
 form#search {
-  margin-top: 124px;
+  margin-top: 90px;
   float: right; }
   form#search input#search-q {
     font-size: 1.6em;
