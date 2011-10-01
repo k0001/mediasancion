@@ -106,6 +106,3 @@ def comision_detail(request, camara, slug):
 def legislador_list(request, camara=None):
     pass
 
-def legislador_detail(request, slug):
-    pass
-

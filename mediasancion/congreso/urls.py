@@ -58,24 +58,16 @@ urlpatterns_camara_comisiones = patterns('mediasancion.congreso.views',
         name='detail'),
 )
 
+
 # congreso:legisladores:
+# congreso:diputados:legisladores:
+# congreso:senadores:legisladores:
 urlpatterns_legisladores = patterns('mediasancion.congreso.views',
     url(r'^$',
         'legislador_list',
         name='list'),
-
-    url(r'^(?P<slug>[-\w]+)/$',
-        'legislador_detail',
-        name='detail'),
 )
 
-# congreso:diputados:legisladores:
-# congreso:senadores:legisladores:
-urlpatterns_camara_legisladores = patterns('mediasancion.congreso.views',
-    url(r'^$',
-        'legislador_list',
-        name='list'),
-)
 
 # congreso:diputados:
 # congreso:senadores:
@@ -93,7 +85,7 @@ urlpatterns_camara = patterns('',
                 namespace='comisiones', app_name='congreso')),
 
     url(r'^legisladores/',
-        include(urlpatterns_camara_legisladores,
+        include(urlpatterns_legisladores,
                 namespace='legisladores', app_name='congreso')),
 )
 

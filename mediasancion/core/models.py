@@ -123,6 +123,10 @@ class Persona(StandardAbstractModel):
     def api0_url(self):
         return 'api0:core:personas:detail', (self.uuid,)
 
+    @models.permalink
+    def get_absolute_url(self):
+        return 'core:personas:detail', (self.slug,)
+
     def save(self, *args, **kwargs):
         # Somehow forbid adding a partial identity
         if self.documento_tipo or self.documento_numero:

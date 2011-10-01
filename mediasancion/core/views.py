@@ -28,3 +28,6 @@ def distrito_list(request):
 
 def distrito_detail(request, slug):
     pass
+
+def persona_detail(request, slug):
+    pass

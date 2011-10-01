@@ -42,6 +42,13 @@ urlpatterns_distritos = patterns('mediasancion.core.views',
         name='detail'),
 )
 
+# core:personas:
+urlpatterns_distritos = patterns('mediasancion.core.views',
+    url(r'^(?P<slug>[-\w]+)/$',
+        'persona_detail',
+        name='detail'),
+)
+
 # core:
 urlpatterns = patterns('',
     url(r'^partidos/',
@@ -51,4 +58,8 @@ urlpatterns = patterns('',
     url(r'^distritos/',
         include(urlpatterns_distritos,
                 namespace='distritos', app_name='core')),
+
+    url(r'^personas/',
+        include(urlpatterns_distritos,
+                namespace='personas', app_name='core')),
 )
