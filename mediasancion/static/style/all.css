@@ -65,7 +65,7 @@ body {
       list-style: none;
       min-height: 24px; }
       #nav-out #nav ul#breadcrumbs li {
-        color: white;
+        color: #ddd8d1;
         text-transform: uppercase;
         display: inline;
         font-size: 0.7em; }
@@ -112,7 +112,8 @@ body {
         content: ""; }
 
 form#search {
-  margin-top: 90px;
+  margin-right: 8px;
+  margin-top: 96px;
   float: right; }
   form#search input#search-q {
     font-size: 1.6em;
@@ -147,7 +148,7 @@ body#proyecto-detail-page article.proyecto section.meta {
   background-color: #ddd8d1;
   width: 240px;
   padding: 8px;
-  margin-left: 8px; }
+  margin: 8px; }
   body#proyecto-detail-page article.proyecto section.meta dt {
     color: #838383;
     font-size: 0.9em; }
