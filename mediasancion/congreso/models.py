@@ -94,6 +94,16 @@ class Legislador(StandardAbstractModel):
             out += u' %s-%s' % (self.inicio.strftime('%Y'), self.fin.strftime('%Y'))
         return out
 
+    @property
+    def tipo_display(self):
+        if self.camara == 'S':
+            return _(u"Senador")
+        elif self.camara == 'D':
+            return _(u"Diputado")
+        else:
+            return _(u"Legislador")
+
+
     def save(self, *args, **kwargs):
         if self.inicio and self.fin and not self.inicio <= self.fin:
             raise ValueError('%s > %s' % (self.inicio, self.fin))
@@ -164,7 +174,7 @@ class Proyecto(StandardAbstractModel):
     mensaje = models.CharField(max_length=15)
     sumario = models.TextField(blank=True)
     fundamentos = models.TextField(blank=True)
-    firmantes = models.ManyToManyField(Legislador, through='FirmaProyecto')
+    firmantes_set = models.ManyToManyField(Legislador, through='FirmaProyecto')
     comisiones = models.ManyToManyField(Comision)
     texto_completo_url = models.URLField()
     texto_mediasancion_senadores_url = models.URLField()
@@ -215,11 +225,19 @@ class Proyecto(StandardAbstractModel):
         if self.camara_revisora:
             return CAMARA_CHOICES_SLUGS[self.camara_revisora]
 
+    @property
+    def firmante(self):
+        return self.firmantes_set.get(firmaproyecto__tipo_firma='F')
+
+    @property
+    def cofirmantes(self):
+        return self.firmantes_set.filter(firmaproyecto__tipo_firma='C')
+
 
 class FirmaProyecto(StandardAbstractModel):
     TIPO_FIRMA_CHOICES = (
-        ('F', _(u'Firmante')),
-        ('C', _(u'Cofirmante')), )
+        ('F', _(u'firmante')),
+        ('C', _(u'cofirmante')), )
 
     PODER_CHOICES = (
         ('L', _(u"legislativo")),
@@ -237,3 +255,7 @@ class FirmaProyecto(StandardAbstractModel):
 
     class Meta:
         unique_together = ('legislador', 'proyecto')
+
+        # quick hack so that firmantes come before cofirmantes by default, and
+        # so that poder ejecutivo comes fefore poder legislativo
+        ordering = ('-tipo_firma', 'poder')

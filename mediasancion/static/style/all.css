@@ -139,18 +139,18 @@ body#search-results-page #search-results .proyecto {
     color: #838383;
     font-size: 0.9em; }
 
-body#proyecto-detail-page article#proyecto p#summary {
+body#proyecto-detail-page article.proyecto p.summary {
   font-size: 1.1em; }
-body#proyecto-detail-page article#proyecto section#meta {
+body#proyecto-detail-page article.proyecto section.meta {
   float: right;
   text-align: right;
   background-color: #ddd8d1;
   width: 240px;
   padding: 8px;
   margin-left: 8px; }
-  body#proyecto-detail-page article#proyecto section#meta dt {
+  body#proyecto-detail-page article.proyecto section.meta dt {
     color: #838383;
     font-size: 0.9em; }
-  body#proyecto-detail-page article#proyecto section#meta dd {
+  body#proyecto-detail-page article.proyecto section.meta dd {
     font-weight: bold;
     color: #3b3b3b; }

@@ -20,8 +20,8 @@
 from django.conf.urls.defaults import *
 
 
-# core:partidos:
-urlpatterns_partidos = patterns('mediasancion.core.views',
+# core:bloques:
+urlpatterns_bloques = patterns('mediasancion.core.views',
     url(r'^$',
         'partido_list',
         name='list'),
@@ -51,9 +51,9 @@ urlpatterns_distritos = patterns('mediasancion.core.views',
 
 # core:
 urlpatterns = patterns('',
-    url(r'^partidos/',
-        include(urlpatterns_partidos,
-                namespace='partidos', app_name='core')),
+    url(r'^bloques/',
+        include(urlpatterns_bloques,
+                namespace='bloques', app_name='core')),
 
     url(r'^distritos/',
         include(urlpatterns_distritos,

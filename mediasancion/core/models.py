@@ -55,10 +55,6 @@ class Partido(StandardAbstractModel):
     def __unicode__(self):
         return self.nombre
 
-    @models.permalink
-    def get_absolute_url(self):
-        return 'core:partidos:detail', (self.slug,)
-
     @property
     @models.permalink
     def api0_url(self):
@@ -79,7 +75,7 @@ class Bloque(StandardAbstractModel):
 
     @models.permalink
     def get_absolute_url(self):
-        return 'core:bloque:detail', (self.slug,)
+        return 'core:bloques:detail', (self.slug,)
 
     @property
     @models.permalink

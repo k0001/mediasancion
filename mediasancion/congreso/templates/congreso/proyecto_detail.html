@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load url from future %}
 {% load i18n %}
 {% load utils_html %}
 
@@ -15,9 +16,9 @@
 {% endif %}
 
 {% block content %}
-  <article id="proyecto">
+  <article class="proyecto" id="{{ proyecto.uuid }}">
 
-    <section id="meta">
+    <section class="meta">
       <dt id="camara_origen">{% trans "Cámara de Orígen" %}</dt>
       <dd>{{ proyecto.get_camara_origen_display|capfirst }}</dd>
       <dt id="camara_origen_expediente">
@@ -50,5 +51,27 @@
     </section>
 
     <p id="summary" class="content-wrap">{{ proyecto.sumario }}</p>
+
+    {% if proyecto.firmaproyecto_set %}
+      <section class="firmas" class="content-wrap">
+        <h1>{% trans "Firmas" %}</h1>
+        <ul>
+          {% for firmaproyecto in proyecto.firmaproyecto_set.all %}
+            <li class="firmaproyecto" id="{{ firmaproyecto.uuid }}">
+              <p class="legislador">
+                <span class="persona">{{ firmaproyecto.legislador.persona|objlink }}</span>
+                <span class="tipo-firma" data-tipo-firma="{{ firmaproyecto.tipo_firma }}">{{ firmaproyecto.get_tipo_firma_display }}</span>
+                <br />
+                {{ firmaproyecto.legislador.tipo_display }}
+                {% trans "por el bloque" %}
+                <span class="bloque">{{ firmaproyecto.legislador.bloque|objlink }}</span>
+                {% trans "en el distrito de" %}
+                <span class="distrito">{{ firmaproyecto.legislador.distrito|objlink }}</span>
+              </p>
+            </li>
+          {% endfor %}
+        </ul>
+      </section>
+    {% endif %}
   </article>
 {% endblock %}
