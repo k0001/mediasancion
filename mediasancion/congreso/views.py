@@ -17,14 +17,16 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.db.models import Q
+from datetime import datetime
+from django.db.models import Q, Count
 from django.http import Http404
 from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 
-from .models import Proyecto, CAMARA_CHOICES_DISPLAYS, CAMARA_CHOICES_SLUGS
+from .models import (Comision, Proyecto,
+                     CAMARA_CHOICES_DISPLAYS, CAMARA_CHOICES_SLUGS)
 from django_gqslpagination import GroupedQuerySetLaxPaginator, EmptyPage
 
 
@@ -96,12 +98,58 @@ def proyecto_detail(request, camara, expediente):
                               context_instance=RequestContext(request))
 
 
-
-def comision_list(request, camara=None):
+def comision_list(request):
     pass
+
+
+
+def comision_list_by_camara(request, camara):
+    qs = Comision.objects.filter(camara=camara)
+
+    # XXX we disabled this for now since we don't have MembresiaComision data!
+    ## NOTE By default we list only Comision objects with at least a Legislador
+    ##      currently active.
+    #now = datetime.now()
+    #qs = qs.filter(membresiacomision__legislador__inicio__lte=now,
+    #               membresiacomision__legislador__fin__gte=now)
+
+    qs = qs.select_related('membresiacomision') \
+           .annotate(Count('membresiacomision')) \
+           .order_by('nombre')
+
+    breadcrumbs = (
+        (reverse('congreso:%s:detail' % CAMARA_CHOICES_SLUGS[camara]),
+            CAMARA_CHOICES_DISPLAYS[camara]), )
+
+    title = _(u"Comisiones en Camara de %(camara)s") % {
+                    'camara': CAMARA_CHOICES_DISPLAYS[camara].capitalize() }
+
+    c = { 'title': title,
+          'breadcrumbs': breadcrumbs,
+          'comision_list': qs }
+
+    return render_to_response('congreso/comision_list_by_camara.html', c,
+                              context_instance=RequestContext(request))
+
+
 
 def comision_detail(request, camara, slug):
-    pass
+    comision = get_object_or_404(Comision, camara=camara, slug=slug)
+
+    breadcrumbs = (
+        (reverse('congreso:%s:detail' % CAMARA_CHOICES_SLUGS[camara]),
+            CAMARA_CHOICES_DISPLAYS[camara]),
+        (reverse('congreso:%s:comisiones:list' % CAMARA_CHOICES_SLUGS[camara]),
+            _(u"Comisiones")), )
+
+    c = { 'title': comision.nombre,
+          'breadcrumbs': breadcrumbs,
+          'comision': comision }
+
+    return render_to_response('congreso/comision_detail.html', c,
+                              context_instance=RequestContext(request))
+
+
 
 def legislador_list(request, camara=None):
     pass
