@@ -1,26 +1,40 @@
 {% extends "base.html" %}
+{% load i18n %}
 {% load utils_html %}
 
 {% block title %}{{ comision }}{% endblock %}
 {% block htmltitle %}{{ comision|objlink }}{% endblock %}
 {% block htmlsubtitle %}Comisión de la Cámara de {{ comision.get_camara_display }}.{% endblock %}
 
+{% block bodyid %}comision-detail{% endblock %}
+
 {% block content %}
+  <article class="comision" id="{{ comision.uuid }}">
     {% if comision.descripcion %}
-      <div id="sumario">{{ comision.descripcion }}</div>
+      <p class="descripcion">{{ comision.descripcion }}</div>
     {% endif %}
 
-    <h3>Miembros</h3>
-    <ul id="miembros">
-      {% for mc in comision.membresiacomision_set.all %}
-      <li>{{ mc.legislador|objlink }} ({{ mc.get_cargo_display }})</li>
-      {% endfor %}
-    </ul>
+    <section class="miembros">
+      <h1>Miembros</h1>
+      <ul class="membresiacomision-list">
+        {% for mc in comision.membresiacomision_set.all %}
+          <li class="membresiacomision" id="{{ mc.uuid }}">
+            <p class="legislador" id="{{ mc.uuid }}">
+              {{ mc.legislador|objlink }}
+              <span class="cargo" data-cargo="{{ mc.cargo }}">{{ mc.get_cargo_display }}</span>
+            </p>
+          </li>
+        {% endfor %}
+      </ul>
+    </section>
 
-    <h3>Proyectos</h3>
-    <ul>
-      {% for p in comision.proyecto_set.all %}
-      <li>{{ p|objlink }}</li>
-      {% endfor %}
-    </ul>
+    <section class="proyectos">
+      <h1>Proyectos</h1>
+      <ul class="proyecto-list">
+        {% for p in comision.proyecto_set.all %}
+          <li class="proyecto" id="{{ p.uuid }}">{{ p|objlink }}</li>
+        {% endfor %}
+      </ul>
+    </section>
+  </article>
 {% endblock %}

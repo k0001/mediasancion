@@ -134,7 +134,22 @@ def comision_list_by_camara(request, camara):
 
 
 def comision_detail(request, camara, slug):
-    pass
+    comision = get_object_or_404(Comision, camara=camara, slug=slug)
+
+    breadcrumbs = (
+        (reverse('congreso:%s:detail' % CAMARA_CHOICES_SLUGS[camara]),
+            CAMARA_CHOICES_DISPLAYS[camara]),
+        (reverse('congreso:%s:comisiones:list' % CAMARA_CHOICES_SLUGS[camara]),
+            _(u"Comisiones")), )
+
+    c = { 'title': comision.nombre,
+          'breadcrumbs': breadcrumbs,
+          'comision': comision }
+
+    return render_to_response('congreso/comision_detail.html', c,
+                              context_instance=RequestContext(request))
+
+
 
 def legislador_list(request, camara=None):
     pass
