@@ -12,17 +12,8 @@
         <div class="legisladores">
           <p>
             {% trans "Legisladores actualmente en el Congreso" %}:
-            <strong><span class="legislador-count">{{ bloque.legislador__count }}</span></strong>
+            <strong><span class="legislador-count">{{ bloque.legisladores__count }}</span></strong>
           </p>
-          {% if bloque.legislador__count %}
-            <ul>
-              {% for legislador in bloque.denorm_legisladores %}
-                <li class="legislador" id="{{ legislador.uuid }}">
-                  {{ legislador.persona|objlink }}
-                </li>
-              {% endfor %}
-            </ul>
-          {% endif %}
         </div>
       </article>
     {% endfor %}

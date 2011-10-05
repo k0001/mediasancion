@@ -42,15 +42,6 @@ def bloque_list(request):
 
     bloques = qs.all()
 
-    # Denormalize Legislador objects related to each Bloque, sorting by name
-    for b in bloques:
-        b.denorm_legisladores = \
-            Legislador.current.filter(bloque=b) \
-                              .select_related('persona') \
-                              .order_by('persona__apellido',
-                                        'persona__nombre')
-
-
     c = { 'title': _(u"Bloques"),
           'bloques': bloques }
 
