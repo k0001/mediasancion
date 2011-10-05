@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load utils_html %}
+
+{% block bodyid %}comision-list{% endblock %}
+
+{% block content %}
+  <section class="comision-list content-wrap">
+    {% for comision in comision_list %}
+      <article class="comision" id="{{ comision.uuid }}">
+        <h1><a href="{{ comision.get_absolute_url }}">{{ comision.nombre }}</a></h1>
+        <div class="legisladores">
+          <p>
+            {% trans "Legisladores actualmente en el Congreso" %}:
+            <strong><span class="legislador-count">{{ comision.membresiacomision__count }}</span></strong>
+          </p>
+        </div>
+      </article>
+    {% endfor %}
+  </section>
+{% endblock %}
+

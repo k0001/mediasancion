@@ -50,7 +50,7 @@ urlpatterns_comisiones = patterns('mediasancion.congreso.views',
 # congreso:senadores:comisiones:
 urlpatterns_camara_comisiones = patterns('mediasancion.congreso.views',
     url(r'^$',
-        'comision_list',
+        'comision_list_by_camara',
         name='list'),
 
     url(r'^(?P<slug>[-\w]+)/$',
