@@ -18,7 +18,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
-from datetime import date
+from datetime import date, datetime
 
 import Image
 
@@ -69,6 +69,13 @@ class Comision(StandardAbstractModel):
         return 'api0:congreso:comisiones:detail', (self.uuid,)
 
 
+class CurrentLegisladorManager(models.Manager):
+    def get_query_set(self):
+        now = datetime.now()
+        return super(CurrentLegisladorManager, self) \
+            .get_query_set().filter(inicio__lte=now, fin__gte=now)
+
+
 class Legislador(StandardAbstractModel):
     uuid = UUIDField(version=4, unique=True, db_index=True)
     persona = models.ForeignKey('core.Persona', null=True)
@@ -79,6 +86,9 @@ class Legislador(StandardAbstractModel):
     partido = models.ForeignKey('core.Partido', null=True)
     bloque = models.ForeignKey('core.Bloque', null=True)
     distrito = models.ForeignKey('core.Distrito', null=True)
+
+    objects = models.Manager()
+    current = CurrentLegisladorManager()
 
     class Meta:
         ordering = '-fin', '-inicio'

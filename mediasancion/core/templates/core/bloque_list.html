@@ -11,7 +11,7 @@
         <h1><a href="{{ bloque.get_absolute_url }}">{{ bloque.nombre }}</a></h1>
         <div class="legisladores">
           <p>
-            {% trans "Legisladores en el Congreso" %}:
+            {% trans "Legisladores actualmente en el Congreso" %}:
             <strong><span class="legislador-count">{{ bloque.legislador__count }}</span></strong>
           </p>
           {% if bloque.legislador__count %}

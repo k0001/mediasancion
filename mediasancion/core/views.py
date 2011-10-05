@@ -19,10 +19,12 @@
 
 from datetime import datetime
 from django.db.models import Count
-from django.shortcuts import render_to_response
+from django.core.urlresolvers import reverse
+from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 from .models import Bloque
+from ..congreso.models import Legislador
 
 
 def bloque_list(request):
@@ -40,11 +42,14 @@ def bloque_list(request):
 
     bloques = qs.all()
 
-    # Denormalize Legislador objects related to each Bloque, sorting them by name
+    # Denormalize Legislador objects related to each Bloque, sorting by name
     for b in bloques:
-        b.denorm_legisladores = b.legislador_set.select_related('persona') \
-                                                .order_by('persona__apellido',
-                                                          'persona__nombre')
+        b.denorm_legisladores = \
+            Legislador.current.filter(bloque=b) \
+                              .select_related('persona') \
+                              .order_by('persona__apellido',
+                                        'persona__nombre')
+
 
     c = { 'title': _(u"Bloques"),
           'bloques': bloques }
@@ -54,7 +59,24 @@ def bloque_list(request):
 
 
 def bloque_detail(request, slug):
-    pass
+    bloque = get_object_or_404(Bloque, slug=slug)
+
+    bloque.denorm_legisladores = \
+        Legislador.current.filter(bloque=bloque) \
+                          .select_related('persona') \
+                          .order_by('persona__apellido',
+                                    'persona__nombre')
+
+    breadcrumbs = (
+        (reverse('core:bloques:list'), _(u"Bloques")), )
+
+    c = { 'title': bloque.nombre,
+          'bloque': bloque }
+
+    return render_to_response('core/bloque_detail.html', c,
+                              context_instance=RequestContext(request))
+
+
 
 def distrito_list(request):
     pass

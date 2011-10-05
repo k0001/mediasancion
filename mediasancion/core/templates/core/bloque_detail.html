@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load utils_html %}
+
+{% block bodyid %}bloque-detail{% endblock %}
+
+{% block content %}
+  <article id="{{ bloque.uuid }}" class="bloque content-wrap">
+    <div class="legisladores">
+      <p>
+        {% trans "Legisladores actualmente en el Congreso" %}:
+        <strong><span class="legislador-count">{{ bloque.denorm_legisladores.count }}</span></strong>
+      </p>
+      {% if bloque.legislador_set %}
+        <ul>
+          {% for legislador in bloque.denorm_legisladores %}
+            <li class="legislador" id="{{ legislador.uuid }}">
+              {{ legislador.persona|objlink }}
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+  </article>
+{% endblock %}
+
+
