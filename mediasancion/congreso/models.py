@@ -269,3 +269,20 @@ class FirmaProyecto(StandardAbstractModel):
         # quick hack so that firmantes come before cofirmantes by default, and
         # so that poder ejecutivo comes fefore poder legislativo
         ordering = ('-tipo_firma', 'poder')
+
+
+class DictamenProyecto(StandardAbstractModel):
+    uuid = UUIDField(version=4, unique=True, db_index=True)
+    proyecto = models.ForeignKey(Proyecto)
+    camara = models.CharField(max_length=1, choices=CAMARA_CHOICES)
+    orden_del_dia = models.CharField(max_length=9, blank=True)
+    resultado = models.TextField()
+    descripcion = models.TextField(blank=True)
+    fecha = models.DateField(null=True, blank=True)
+    # since not every dictamen has an associated fecha, we need to keep an
+    # index so we can later sort them.
+    index = models.PositiveIntegerField()
+
+    class Meta:
+        unique_together = ('proyecto', 'index'),
+        ordering = 'index',
