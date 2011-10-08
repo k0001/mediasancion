@@ -30,8 +30,10 @@ import isodate
 from datetime import datetime
 from pprint import pprint
 
+from django.db.models import Q
+
 from mediasancion.core.models import Partido, Distrito, Bloque, Persona
-from mediasancion.congreso.models import Proyecto, FirmaProyecto, Legislador, Comision
+from mediasancion.congreso.models import Proyecto, FirmaProyecto, Legislador, Comision, DictamenProyecto
 
 
 logging.basicConfig(level=logging.WARNING)
@@ -303,11 +305,63 @@ def store_firmaproyecto_item(x):
     return True
 
 
+def store_dictamenproyecto_item(x):
+    try:
+        proyecto = Proyecto.objects.get(camara_origen_expediente=x['proyecto_camara_origen_expediente'],
+                                        camara_origen=x['proyecto_camara_origen'])
+    except Proyecto.DoesNotExist:
+        return False # queue for later upserting.
+
+    try:
+        x_fecha = isodate.parse_date(x['fecha']) if 'fecha' in x else None
+        # NOTE We haven't noticed any case where a single Proyecto gets more
+        # than a single Dictamen per camara per day, so we are relying on that
+        dp = (DictamenProyecto.objects.filter(proyecto=proyecto,
+                                              camara=x['camara'],
+                                              fecha=x_fecha,
+                                              orden_del_dia=(x.get('orden_del_dia') or ''))
+                                      # either has the same resultado, or has no resultado
+                                      .filter(Q(resultado=(x.get('resultado') or '')) |
+                                              Q(resultado=''))
+                                      # either has the same descripcion, or has no descripcion
+                                      .filter(Q(descripcion=(x.get('descripcion') or '')) |
+                                              Q(descripcion=''))
+                                      .get())
+
+    except DictamenProyecto.DoesNotExist:
+        dp = DictamenProyecto(proyecto=proyecto,
+                              camara=x['camara'],
+                              fecha=x_fecha,
+                              orden_del_dia=(x.get('orden_del_dia') or u''),
+                              descripcion=(x.get('descripcion') or u''),
+                              resultado=(x.get('resultado') or u''))
+        dp.resource_source = x['resource_source']
+        dp.resource_url = x['resource_url']
+        dp.resource_id = x.get('resource_id')
+        dp.save()
+        log.debug(u'Created %s DictamenProyecto' % dp.uuid)
+
+    else:
+        dp_changed = False
+        if dp.resultado and x.get('resultado') and dp.resultado != x.get('resultado'):
+            dp.resultado = x.get('resultado', u'')
+            dp_changed = True
+        if dp.descripcion and x.get('descripcion') and dp.descripcion != x.get('descripcion'):
+            dp.descripcion = x.get('descripcion', u'')
+            dp_changed = True
+
+        if dp_changed:
+            dp.save()
+        log.debug(u'Updated %s DictamenProyecto' % dp.uuid)
+
+    return True
+
+
 def store_item(t, x):
-    ts = {
-        'LegisladorItem': store_legislador_item,
-        'ProyectoItem': store_proyecto_item,
-        'FirmaProyectoItem': store_firmaproyecto_item }
+    ts = { 'LegisladorItem': store_legislador_item,
+           'ProyectoItem': store_proyecto_item,
+           'FirmaProyectoItem': store_firmaproyecto_item,
+           'DictamenProyectoItem': store_dictamenproyecto_item }
     try:
         _store = ts[t]
     except KeyError:
@@ -411,7 +465,8 @@ if __name__ == '__main__':
         def _sort_key(x):
             k = x[0]
             try:
-                return ('LegisladorItem', 'ProyectoItem', 'FirmaProyectoItem').index(k)
+                return ('LegisladorItem', 'ProyectoItem', 'FirmaProyectoItem',
+                        'DictamenProyectoItem').index(k)
             except ValueError:
                 return 100
         add_queue.sort(key=_sort_key)
