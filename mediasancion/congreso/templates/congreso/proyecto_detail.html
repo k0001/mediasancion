@@ -2,8 +2,9 @@
 {% load url from future %}
 {% load i18n %}
 {% load utils_html %}
+{% load congreso %}
 
-{% block bodyid %}proyecto-detail-page{% endblock %}
+{% block bodyid %}proyecto-detail{% endblock %}
 
 {% if proyecto.camara_revisora %}
   {% block htmlsubtitle %}
@@ -17,61 +18,102 @@
 
 {% block content %}
   <article class="proyecto" id="{{ proyecto.uuid }}">
+    <div class="meta">
 
-    <section class="meta">
-      <dt id="camara_origen">{% trans "Cámara de Orígen" %}</dt>
-      <dd>{{ proyecto.get_camara_origen_display|capfirst }}</dd>
-      <dt id="camara_origen_expediente">
-        {% blocktrans with camara=proyecto.get_camara_origen_display|capfirst %}
-          Expediente en {{ camara }}
-        {% endblocktrans %}
+      {# CAMARA DE ORIGEN Y EXPEDIENTE #}
+      <dt class="camara-origen">{% trans "Cámara de Orígen" %}</dt>
+      <dd class="camara-origen" data-camara="{{ proyecto.camara_origen }}">{{ proyecto.camara_origen|camara_display }}</dd>
+      <dt class="camara-origen-expediente">
+        {% trans "Expediente en" %}
+        {{ proyecto.camara_origen|camara_display }}
       </dt>
-      <dd>
+      <dd class="camara-origen-expediente" data-expediente="{{ proyecto.camara_origen_expediente }}">
         <a href="{{ proyecto.get_origen_pov_absolute_url }}">{{ proyecto.camara_origen_expediente }}</a>
       </dd>
 
+      {# CAMARA REVISORA Y EXPEDIENTE #}
       {% if proyecto.camara_revisora %}
-        <dt id="camara_origen">{% trans "Cámara Revisora" %}</dt>
-        <dd>{{ proyecto.get_camara_revisora_display|capfirst }}</dd>
-        <dt id="camara_revisora_expediente">
-          {% blocktrans with camara=proyecto.get_camara_revisora_display|capfirst %}
-            Expediente en {{ camara }}
-          {% endblocktrans %}
+        <dt class="camara-revisora">{% trans "Cámara Revisora" %}</dt>
+        <dd class="camara-revisora" data-camara="{{ proyecto.camara_revisora }}">{{ proyecto.camara_revisora|camara_display }}</dd>
+        <dt class="camara-revisora-expediente">
+          {% trans "Expediente en" %}
+          {{ proyecto.camara_revisora|camara_display }}
         </dt>
-        <dd>
+        <dd class="camara-revisora-expediente" data-expediente="{{ proyecto.camara_revisora_expediente }}">
           <a href="{{ proyecto.get_revisora_pov_absolute_url }}">{{ proyecto.camara_revisora_expediente }}</a>
         </dd>
       {% endif %}
 
-      <dt id="presentacion">{% trans "Publicación" %}</dt>
-      <dd>
-        {{ proyecto.publicacion_fecha|date:"DATE_FORMAT" }}
-        {% if proyecto.publicacion %}{{ proyecto.publicacion }}{% endif %}
+      {# PUBLICACIÓN #}
+      <dt class="publicacion">{% trans "Publicación" %}</dt>
+      <dd class="publicacion">
+        <time class="publicacion-fecha" datetime="{{ proyecto.publicacion_fecha|date:"Y-m-d" }}" pubdate>
+          {{ proyecto.publicacion_fecha|date:"DATE_FORMAT" }}
+        </time>
+        {% if proyecto.publicacion_en %}
+          {% trans "en" %}
+          <span class="publicacion-en">{{ proyecto.publicacion_en }}</span>
+        {% endif %}
       </dd>
-    </section>
 
-    <p id="summary" class="content-wrap">{{ proyecto.sumario }}</p>
+    </div>
 
+
+    {# SUMARIO #}
+    <p class="sumario">{{ proyecto.sumario }}</p>
+
+    {# FIRMAS #}
     {% if proyecto.firmaproyecto_set %}
-      <section class="firmas" class="content-wrap">
+      <section class="firmas">
         <h1>{% trans "Firmas" %}</h1>
         <ul>
           {% for firmaproyecto in proyecto.firmaproyecto_set.all %}
             <li class="firmaproyecto" id="{{ firmaproyecto.uuid }}">
               <p class="legislador">
-                <span class="persona">{{ firmaproyecto.legislador.persona|objlink }}</span>
-                <span class="tipo-firma" data-tipo-firma="{{ firmaproyecto.tipo_firma }}">{{ firmaproyecto.get_tipo_firma_display }}</span>
-                <br />
-                {{ firmaproyecto.legislador.tipo_display }}
+                <span class="persona" id="{{ firmaproyecto.legislador.persona.uuid }}">{{ firmaproyecto.legislador.persona|objlink }}</span>
+                <span class="legislador-tipo">{{ firmaproyecto.legislador.tipo_display }}</span>
                 {% trans "por el bloque" %}
-                <span class="bloque">{{ firmaproyecto.legislador.bloque|objlink }}</span>
+                <span class="bloque" id="{{ firmaproyecto.legislador.bloque.uuid }}">{{ firmaproyecto.legislador.bloque|objlink }}</span>
                 {% trans "en el distrito de" %}
-                <span class="distrito">{{ firmaproyecto.legislador.distrito|objlink }}</span>
+                <span class="distrito" id="{{ firmaproyecto.legislador.distrito.uuid }}">{{ firmaproyecto.legislador.distrito|objlink }}</span>.
+                <span class="tipo-firma" data-tipo-firma="{{ firmaproyecto.tipo_firma }}">{{ firmaproyecto.get_tipo_firma_display|capfirst }}</span>.
               </p>
             </li>
           {% endfor %}
         </ul>
       </section>
+
+      {# DICTÁMENES #}
+      {% if proyecto.dictamenproyecto_set %}
+        <section class="dictamenes">
+          <h1>{% trans "Dictámenes de Comisión" %}</h1>
+          <ol>
+            {% for dictamen in proyecto.dictamenproyecto_set.all %}
+              <li class="dictamenproyecto" id="{{ dictamenproyecto.uuid }}">
+                <div class="meta">
+                  {% trans "En" %}
+                  <span class="camara" data-camara="{{ dictamen.camara }}">{{ dictamen.camara|camara_display_long }}</span>
+                  {% if dictamen.fecha %}
+                    {% trans "el" %}
+                    <time class="fecha" datetime="{{ dictamen.fecha|date:"Y-m-d" }}">{{ dictamen.fecha|date }}</time>
+                  {% endif %}
+                  {% if dictamen.orden_del_dia %}
+                    {% trans "Orden del día" %}
+                    {# TODO link this somewhere #}
+                    {{ dictamen.orden_del_dia }}
+                  {% endif %}
+                </div>
+                {% comment %}
+                  This isn't quite sane yet
+                  {% if dictamen.descripcion %}<p class="descipcion">{{ dictamen.descripcion }}</p>{% endif %}
+                {% endcomment %}
+                {% if dictamen.resultado %}<p class="resultado">{{ dictamen.resultado }}</p>{% endif %}
+              </li>
+            {% endfor %}
+          </ol>
+        </section>
+      {% endif %}
     {% endif %}
+
   </article>
 {% endblock %}

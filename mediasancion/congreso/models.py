@@ -32,9 +32,12 @@ from mediasancion.utils.models import StandardAbstractModel
 
 
 CAMARA_CHOICES = (
-    ('S', _(u"senadores")),
-    ('D', _(u"diputados")), )
+    ('S', _(u"Senadores")),
+    ('D', _(u"Diputados")), )
 CAMARA_CHOICES_DISPLAYS = dict(CAMARA_CHOICES)
+CAMARA_CHOICES_LONG_DISPLAYS = {
+    'S': _(u"Cámara de Senadores"),
+    'D': _(u"Cámara de Diputados") }
 CAMARA_CHOICES_SLUGS = {
     'S': u'senadores',
     'D': u'diputados' }
