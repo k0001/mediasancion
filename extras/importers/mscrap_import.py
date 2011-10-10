@@ -312,25 +312,16 @@ def store_dictamenproyecto_item(x):
     except Proyecto.DoesNotExist:
         return False # queue for later upserting.
 
-    try:
-        x_fecha = isodate.parse_date(x['fecha']) if 'fecha' in x else None
-        # NOTE We haven't noticed any case where a single Proyecto gets more
-        # than a single Dictamen per camara per day, so we are relying on that
-        dp = (DictamenProyecto.objects.filter(proyecto=proyecto,
-                                              camara=x['camara'],
-                                              fecha=x_fecha,
-                                              orden_del_dia=(x.get('orden_del_dia') or ''))
-                                      # either has the same resultado, or has no resultado
-                                      .filter(Q(resultado=(x.get('resultado') or '')) |
-                                              Q(resultado=''))
-                                      # either has the same descripcion, or has no descripcion
-                                      .filter(Q(descripcion=(x.get('descripcion') or '')) |
-                                              Q(descripcion=''))
-                                      .get())
+    x_fecha = isodate.parse_date(x['fecha']) if 'fecha' in x else None
 
+    try:
+        dp = DictamenProyecto.objects.get(proyecto=proyecto,
+                                          camara=x['camara'],
+                                          index=int(x['index']))
     except DictamenProyecto.DoesNotExist:
         dp = DictamenProyecto(proyecto=proyecto,
                               camara=x['camara'],
+                              index=int(x['index']),
                               fecha=x_fecha,
                               orden_del_dia=(x.get('orden_del_dia') or u''),
                               descripcion=(x.get('descripcion') or u''),
