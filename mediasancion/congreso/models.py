@@ -289,3 +289,19 @@ class DictamenProyecto(StandardAbstractModel):
     class Meta:
         unique_together = ('proyecto', 'index'),
         ordering = 'index',
+
+
+class TramiteProyecto(StandardAbstractModel):
+    uuid = UUIDField(version=4, unique=True, db_index=True)
+    proyecto = models.ForeignKey(Proyecto)
+    camara = models.CharField(max_length=1, choices=CAMARA_CHOICES)
+    resultado = models.TextField()
+    descripcion = models.TextField(blank=True)
+    fecha = models.DateField(null=True, blank=True)
+    # since not every tramite has an associated fecha, we need to keep an
+    # index so we can later sort them.
+    index = models.PositiveIntegerField()
+
+    class Meta:
+        unique_together = ('proyecto', 'index'),
+        ordering = 'index',
