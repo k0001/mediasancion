@@ -19,43 +19,43 @@
 {% block content %}
   <article class="proyecto" id="{{ proyecto.uuid }}">
     <div class="meta">
-
-      {# CAMARA DE ORIGEN Y EXPEDIENTE #}
-      <dt class="camara-origen">{% trans "Cámara de Orígen" %}</dt>
-      <dd class="camara-origen" data-camara="{{ proyecto.camara_origen }}">{{ proyecto.camara_origen|camara_display }}</dd>
-      <dt class="camara-origen-expediente">
-        {% trans "Expediente en" %}
-        {{ proyecto.camara_origen|camara_display }}
-      </dt>
-      <dd class="camara-origen-expediente" data-expediente="{{ proyecto.camara_origen_expediente }}">
-        <a href="{{ proyecto.get_origen_pov_absolute_url }}">{{ proyecto.camara_origen_expediente }}</a>
-      </dd>
-
-      {# CAMARA REVISORA Y EXPEDIENTE #}
-      {% if proyecto.camara_revisora %}
-        <dt class="camara-revisora">{% trans "Cámara Revisora" %}</dt>
-        <dd class="camara-revisora" data-camara="{{ proyecto.camara_revisora }}">{{ proyecto.camara_revisora|camara_display }}</dd>
-        <dt class="camara-revisora-expediente">
+      <dl>
+        {# CAMARA DE ORIGEN Y EXPEDIENTE #}
+        <dt class="camara-origen">{% trans "Cámara de Orígen" %}</dt>
+        <dd class="camara-origen" data-camara="{{ proyecto.camara_origen }}">{{ proyecto.camara_origen|camara_display }}</dd>
+        <dt class="camara-origen-expediente">
           {% trans "Expediente en" %}
-          {{ proyecto.camara_revisora|camara_display }}
+          {{ proyecto.camara_origen|camara_display }}
         </dt>
-        <dd class="camara-revisora-expediente" data-expediente="{{ proyecto.camara_revisora_expediente }}">
-          <a href="{{ proyecto.get_revisora_pov_absolute_url }}">{{ proyecto.camara_revisora_expediente }}</a>
+        <dd class="camara-origen-expediente" data-expediente="{{ proyecto.camara_origen_expediente }}">
+          <a href="{{ proyecto.get_origen_pov_absolute_url }}">{{ proyecto.camara_origen_expediente }}</a>
         </dd>
-      {% endif %}
 
-      {# PUBLICACIÓN #}
-      <dt class="publicacion">{% trans "Publicación" %}</dt>
-      <dd class="publicacion">
-        <time class="publicacion-fecha" datetime="{{ proyecto.publicacion_fecha|date:"Y-m-d" }}" pubdate>
-          {{ proyecto.publicacion_fecha|date:"DATE_FORMAT" }}
-        </time>
-        {% if proyecto.publicacion_en %}
-          {% trans "en" %}
-          <span class="publicacion-en">{{ proyecto.publicacion_en }}</span>
+        {# CAMARA REVISORA Y EXPEDIENTE #}
+        {% if proyecto.camara_revisora %}
+          <dt class="camara-revisora">{% trans "Cámara Revisora" %}</dt>
+          <dd class="camara-revisora" data-camara="{{ proyecto.camara_revisora }}">{{ proyecto.camara_revisora|camara_display }}</dd>
+          <dt class="camara-revisora-expediente">
+            {% trans "Expediente en" %}
+            {{ proyecto.camara_revisora|camara_display }}
+          </dt>
+          <dd class="camara-revisora-expediente" data-expediente="{{ proyecto.camara_revisora_expediente }}">
+            <a href="{{ proyecto.get_revisora_pov_absolute_url }}">{{ proyecto.camara_revisora_expediente }}</a>
+          </dd>
         {% endif %}
-      </dd>
 
+        {# PUBLICACIÓN #}
+        <dt class="publicacion">{% trans "Publicación" %}</dt>
+        <dd class="publicacion">
+          <time class="publicacion-fecha" datetime="{{ proyecto.publicacion_fecha|date:"Y-m-d" }}" pubdate>
+            {{ proyecto.publicacion_fecha|date:"DATE_FORMAT" }}
+          </time>
+          {% if proyecto.publicacion_en %}
+            {% trans "en" %}
+            <span class="publicacion-en">{{ proyecto.publicacion_en }}</span>
+          {% endif %}
+        </dd>
+      </dl>
     </div>
 
 
@@ -83,13 +83,35 @@
         </ul>
       </section>
 
+      {# TRÁMITES #}
+      {% if proyecto.tramiteproyecto_set %}
+        <section class="tramites">
+          <h1>{% trans "Trámites" %}</h1>
+          <ol>
+            {% for tramite in proyecto.tramiteproyecto_set.all %}
+              <li class="" id="{{ tramite.uuid }}">
+                <div class="meta">
+                  {% trans "En" %}
+                  <span class="camara" data-camara="{{ tramite.camara }}">{{ tramite.camara|camara_display_long }}</span>
+                  {% if tramite.fecha %}
+                    {% trans "el" %}
+                    <time class="fecha" datetime="{{ tramite.fecha|date:"Y-m-d" }}">{{ tramite.fecha|date }}</time>
+                  {% endif %}
+                </div>
+                {% if tramite.descripcion %}<p class="descipcion">{{ tramite.descripcion }}</p>{% endif %}
+                {% if tramite.resultado %}<p class="resultado">{{ tramite.resultado }}</p>{% endif %}
+              </li>
+            {% endfor %}
+          </ol>
+        </section>
+
       {# DICTÁMENES #}
       {% if proyecto.dictamenproyecto_set %}
         <section class="dictamenes">
           <h1>{% trans "Dictámenes de Comisión" %}</h1>
           <ol>
             {% for dictamen in proyecto.dictamenproyecto_set.all %}
-              <li class="dictamenproyecto" id="{{ dictamenproyecto.uuid }}">
+              <li class="dictamen" id="{{ dictamen.uuid }}">
                 <div class="meta">
                   {% trans "En" %}
                   <span class="camara" data-camara="{{ dictamen.camara }}">{{ dictamen.camara|camara_display_long }}</span>
