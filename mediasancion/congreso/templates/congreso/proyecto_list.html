@@ -1,24 +1,65 @@
 {% extends "base.html" %}
 {% load i18n %}
-{% load utils_html utils_pagination %}
+{% load utils_html %}
+{% load utils_pagination %}
+{% load congreso %}
 
 {% block bodyid %}proyecto-list{% endblock %}
 
 {% block content %}
   {% show_gqslpagination_by_date page "reverse" %}
-  <div id="proyectos" class="content-wrap">
+  <div class="proyectos">
     {% regroup page.object_list by publicacion_fecha as fecha_list %}
     {% for fecha in fecha_list %}
-      <div class="proyectos-preview-set" id="proyectos-{{ fecha|date:"c" }}">
-        <h3>{{ fecha.grouper }}</h3>
-        <ul class="proyectos">
-          {% for p in fecha.list %}
-            <li class="proyecto" id="{{ p.uuid }}">
-              {{ p|objlink }} {{ p.get_camara_origen_display }}
-            </li>
-          {% endfor %}
-        </ul>
-      </div>
+      <section class="proyectos-preview-set" id="proyectos-{{ fecha|date:"c" }}">
+        <h1><time class="fecha" datetime="{{ fecha|date:"Y-m-d" }}">{{ fecha.grouper }}<time></h1>
+        {% for p in fecha.list %}
+          <article class="proyecto" id="{{ p.uuid }}">
+            <h1>{{ p|objlink }}</h1>
+            {% if p.ley_numero %}
+              <h2>
+                {% trans "Ley" %}
+                <span class="ley-numero" data-ley-numero="{{ p.ley_numero }}">{{ p.ley_numero }}</span>
+              </h2>
+            {% endif %}
+
+            {% if p.reproduccion_expediente %}
+              <p class="reproduccion">
+                {% trans "Reproducción de expediente " %}
+                <span class="expediente">{{ p.reproduccion_expediente }}</span>.
+              </p>
+            {% endif %}
+
+            <p class="origen">
+              {% if p.origen != p.camara_origen %}
+                {# If origen and camara_origen are not the same, then we explicitily name them both #}
+                  {% trans "Originado por" %}
+                  <span class="by" data-by="{{ p.origen }}">{{ p.get_origen_display|capfirst }}</span>
+                  {% trans "en" %}
+                  <span class="camara" data-camara="{{ p.camara_origen }}">{{ p.camara_origen|camara_display_long }}</span>
+              {% else %}
+                {# If origen and camara_origen are the same, then we put them together. See class and data- attributes #}
+                {% trans "Originado en" %}
+                <span class="camara by" data-camara="{{ p.camara_origen }}" data-by="{{ p.origen }}">
+                  {{ p.camara_origen|camara_display_long }}
+                </span>
+              {% endif %}
+              {% trans "con expediente" %}
+              <span class="expediente">{{ p.camara_origen_expediente }}</span>.
+            </p>
+
+            {% if p.camara_revisora %}
+              <p class="revision">
+                {% trans "Revisado en" %}
+                <span class="camara" data-camara="{{ p.camara_revisora }}">{{ p.camara_revisora|camara_display_long }}</span>
+                {% trans "con expediente" %}
+                <span class="expediente">{{ p.camara_revisora_expediente }}</span>.
+              </p>
+            {% endif %}
+
+          </article>
+        {% endfor %}
+      </section>
     {% endfor %}
   </div>
   {% show_gqslpagination_by_date page "reverse" %}
