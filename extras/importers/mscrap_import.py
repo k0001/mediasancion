@@ -33,7 +33,8 @@ from pprint import pprint
 from django.db.models import Q
 
 from mediasancion.core.models import Partido, Distrito, Bloque, Persona
-from mediasancion.congreso.models import Proyecto, FirmaProyecto, Legislador, Comision, DictamenProyecto
+from mediasancion.congreso.models import (Proyecto, FirmaProyecto, Legislador,
+        Comision, DictamenProyecto, TramiteProyecto)
 
 
 logging.basicConfig(level=logging.WARNING)
@@ -325,7 +326,8 @@ def store_dictamenproyecto_item(x):
                               fecha=x_fecha,
                               orden_del_dia=(x.get('orden_del_dia') or u''),
                               descripcion=(x.get('descripcion') or u''),
-                              resultado=(x.get('resultado') or u''))
+                              resultado=(x.get('resultado') or u''),
+                              origin=AUDIT_ORIGIN)
         dp.resource_source = x['resource_source']
         dp.resource_url = x['resource_url']
         dp.resource_id = x.get('resource_id')
@@ -348,11 +350,56 @@ def store_dictamenproyecto_item(x):
     return True
 
 
+def store_tramiteproyecto_item(x):
+    try:
+        proyecto = Proyecto.objects.get(camara_origen_expediente=x['proyecto_camara_origen_expediente'],
+                                        camara_origen=x['proyecto_camara_origen'])
+    except Proyecto.DoesNotExist:
+        return False # queue for later upserting.
+
+    x_fecha = isodate.parse_date(x['fecha']) if 'fecha' in x else None
+
+    try:
+        tp = TramiteProyecto.objects.get(proyecto=proyecto,
+                                         camara=x['camara'],
+                                         index=int(x['index']))
+    except TramiteProyecto.DoesNotExist:
+        tp = TramiteProyecto(proyecto=proyecto,
+                             camara=x['camara'],
+                             index=int(x['index']),
+                             fecha=x_fecha,
+                             descripcion=(x.get('descripcion') or u''),
+                             resultado=(x.get('resultado') or u''),
+                             origin=AUDIT_ORIGIN)
+        tp.resource_source = x['resource_source']
+        tp.resource_url = x['resource_url']
+        tp.resource_id = x.get('resource_id')
+        tp.save()
+        log.debug(u'Created %s TramiteProyecto' % tp.uuid)
+
+    else:
+        tp_changed = False
+        if tp.resultado and x.get('resultado') and tp.resultado != x.get('resultado'):
+            tp.resultado = x.get('resultado', u'')
+            tp_changed = True
+        if tp.descripcion and x.get('descripcion') and tp.descripcion != x.get('descripcion'):
+            tp.descripcion = x.get('descripcion', u'')
+            tp_changed = True
+
+        if tp_changed:
+            tp.save()
+        log.debug(u'Updated %s TramiteProyecto' % tp.uuid)
+
+    return True
+
+
+
 def store_item(t, x):
     ts = { 'LegisladorItem': store_legislador_item,
            'ProyectoItem': store_proyecto_item,
            'FirmaProyectoItem': store_firmaproyecto_item,
-           'DictamenProyectoItem': store_dictamenproyecto_item }
+           'DictamenProyectoItem': store_dictamenproyecto_item,
+           'TramiteProyectoItem': store_tramiteproyecto_item }
     try:
         _store = ts[t]
     except KeyError:
@@ -457,7 +504,7 @@ if __name__ == '__main__':
             k = x[0]
             try:
                 return ('LegisladorItem', 'ProyectoItem', 'FirmaProyectoItem',
-                        'DictamenProyectoItem').index(k)
+                        'DictamenProyectoItem', 'TramiteProyectoItem').index(k)
             except ValueError:
                 return 100
         add_queue.sort(key=_sort_key)
