@@ -27,7 +27,7 @@ register = template.Library()
 
 
 @register.filter
-def camara_display(camara_slug_or_key):
+def camara_display_short(camara_slug_or_key):
     displays = CAMARA_DISPLAYS_SHORT
     if camara_slug_or_key in ('S', 'senadores'):
         return displays['S']

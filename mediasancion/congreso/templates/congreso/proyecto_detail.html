@@ -22,10 +22,10 @@
       <dl>
         {# CAMARA DE ORIGEN Y EXPEDIENTE #}
         <dt class="camara-origen">{% trans "Cámara de Orígen" %}</dt>
-        <dd class="camara-origen" data-camara="{{ proyecto.camara_origen }}">{{ proyecto.camara_origen|camara_display }}</dd>
+        <dd class="camara-origen" data-camara="{{ proyecto.camara_origen }}">{{ proyecto.camara_origen|camara_display_short }}</dd>
         <dt class="camara-origen-expediente">
           {% trans "Expediente en" %}
-          {{ proyecto.camara_origen|camara_display }}
+          {{ proyecto.camara_origen|camara_display_short }}
         </dt>
         <dd class="camara-origen-expediente" data-expediente="{{ proyecto.camara_origen_expediente }}">
           <a href="{{ proyecto.get_origen_pov_absolute_url }}">{{ proyecto.camara_origen_expediente }}</a>
@@ -34,10 +34,10 @@
         {# CAMARA REVISORA Y EXPEDIENTE #}
         {% if proyecto.camara_revisora %}
           <dt class="camara-revisora">{% trans "Cámara Revisora" %}</dt>
-          <dd class="camara-revisora" data-camara="{{ proyecto.camara_revisora }}">{{ proyecto.camara_revisora|camara_display }}</dd>
+          <dd class="camara-revisora" data-camara="{{ proyecto.camara_revisora }}">{{ proyecto.camara_revisora|camara_display_short }}</dd>
           <dt class="camara-revisora-expediente">
             {% trans "Expediente en" %}
-            {{ proyecto.camara_revisora|camara_display }}
+            {{ proyecto.camara_revisora|camara_display_short }}
           </dt>
           <dd class="camara-revisora-expediente" data-expediente="{{ proyecto.camara_revisora_expediente }}">
             <a href="{{ proyecto.get_revisora_pov_absolute_url }}">{{ proyecto.camara_revisora_expediente }}</a>

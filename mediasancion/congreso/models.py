@@ -19,6 +19,7 @@
 
 import os
 from datetime import date, datetime
+from django.utils.functional import curry
 
 import Image
 
@@ -43,6 +44,40 @@ CAMARA_SLUGS = {
     'D': u'diputados' }
 
 
+# This could be a metaclass, but I'm lazy right now.
+def add_camara_text_utils_to_class(cls):
+    """
+    Adds camara values text representation utils to model fields whose
+    `choices` is ``CAMARA_CHOICES``
+
+    Added instance methods:
+
+     - get_<fname>_slug(): slug text representation for camara value.
+     - get_<fname>_display_long(): long text representation for camara value.
+     - get_<fname>_display_short(): short text representation for camara value.
+          This is the same value exposed by get_<fname>_display by default.
+    """
+
+    def _get_display(obj, attr, displays, default=u''):
+        return displays.get(getattr(obj, attr), default)
+
+    for f in cls._meta.fields:
+        if f.choices is CAMARA_CHOICES:
+            cls.add_to_class('get_%s_slug' % f.name,
+                curry(_get_display, attr=f.name,
+                                    displays=CAMARA_SLUGS))
+
+            cls.add_to_class('get_%s_display_long' % f.name,
+                curry(_get_display, attr=f.name,
+                                    displays=CAMARA_DISPLAYS_LONG))
+
+            # this is the same as self.get_<fname>_display. Added just for completeness
+            cls.add_to_class('get_%s_display_short' % f.name,
+                curry(_get_display, attr=f.name,
+                                    displays=CAMARA_DISPLAYS_SHORT))
+
+
+
 class Comision(StandardAbstractModel):
     uuid = UUIDField(version=4, unique=True, db_index=True)
     camara = models.CharField(max_length=1, choices=CAMARA_CHOICES)
@@ -58,18 +93,16 @@ class Comision(StandardAbstractModel):
         verbose_name_plural = _(u"comisiones")
         unique_together = ('camara', 'nombre')
 
-    @property
-    def camara_slug(self):
-        return CAMARA_SLUGS[self.camara]
-
     @models.permalink
     def get_absolute_url(self):
-        return 'congreso:%s:comisiones:detail' % self.camara_slug, (self.slug,)
+        return 'congreso:%s:comisiones:detail' % self.get_camara_slug(), (self.slug,)
 
     @property
     @models.permalink
     def api0_url(self):
         return 'api0:congreso:comisiones:detail', (self.uuid,)
+
+add_camara_text_utils_to_class(Comision)
 
 
 class CurrentLegisladorManager(models.Manager):
@@ -102,7 +135,7 @@ class Legislador(StandardAbstractModel):
         return 'api0:congreso:legisladores:detail', (self.uuid,)
 
     def __unicode__(self):
-        out = u'%s: %s' % (self.persona.full_name, self.get_camara_display())
+        out = u'%s: %s' % (self.persona.full_name, self.get_camara_display_short())
         if self.inicio and self.fin:
             out += u' %s-%s' % (self.inicio.strftime('%Y'), self.fin.strftime('%Y'))
         return out
@@ -122,6 +155,8 @@ class Legislador(StandardAbstractModel):
             raise ValueError('%s > %s' % (self.inicio, self.fin))
         return super(Legislador, self).save(*args, **kwargs)
 
+add_camara_text_utils_to_class(Legislador)
+
 
 class MembresiaComision(StandardAbstractModel):
     CARGO_CHOICES = (
@@ -137,6 +172,7 @@ class MembresiaComision(StandardAbstractModel):
     cargo = models.CharField(max_length=1, choices=CARGO_CHOICES)
 
 
+
 class Reunion(StandardAbstractModel):
     uuid = UUIDField(version=4, unique=True, db_index=True)
     camara = models.CharField(max_length=1, choices=CAMARA_CHOICES)
@@ -144,6 +180,8 @@ class Reunion(StandardAbstractModel):
     nro_reunion = models.IntegerField()
     titulo = models.CharField(max_length=128)
     fecha = models.DateField()
+
+add_camara_text_utils_to_class(Reunion)
 
 
 class AsistenciaReunion(StandardAbstractModel):
@@ -216,12 +254,12 @@ class Proyecto(StandardAbstractModel):
 
     @models.permalink
     def get_origen_pov_absolute_url(self):
-        return 'congreso:%s:proyectos:detail' % self.camara_origen_slug, (self.camara_origen_expediente,)
+        return 'congreso:%s:proyectos:detail' % self.get_camara_origen_slug(), (self.camara_origen_expediente,)
 
     @models.permalink
     def get_revisora_pov_absolute_url(self):
         if self.camara_revisora:
-            return 'congreso:%s:proyectos:detail' % self.camara_revisora_slug, (self.camara_revisora_expediente,)
+            return 'congreso:%s:proyectos:detail' % self.get_camara_revisora_slug(), (self.camara_revisora_expediente,)
 
     @property
     @models.permalink
@@ -230,21 +268,14 @@ class Proyecto(StandardAbstractModel):
 
 
     @property
-    def camara_origen_slug(self):
-        return CAMARA_SLUGS[self.camara_origen]
-
-    @property
-    def camara_revisora_slug(self):
-        if self.camara_revisora:
-            return CAMARA_SLUGS[self.camara_revisora]
-
-    @property
     def firmante(self):
         return self.firmantes_set.get(firmaproyecto__tipo_firma='F')
 
     @property
     def cofirmantes(self):
         return self.firmantes_set.filter(firmaproyecto__tipo_firma='C')
+
+add_camara_text_utils_to_class(Proyecto)
 
 
 class FirmaProyecto(StandardAbstractModel):
@@ -290,6 +321,8 @@ class DictamenProyecto(StandardAbstractModel):
         unique_together = ('proyecto', 'index'),
         ordering = 'index',
 
+add_camara_text_utils_to_class(DictamenProyecto)
+
 
 class TramiteProyecto(StandardAbstractModel):
     uuid = UUIDField(version=4, unique=True, db_index=True)
@@ -305,3 +338,6 @@ class TramiteProyecto(StandardAbstractModel):
     class Meta:
         unique_together = ('proyecto', 'index'),
         ordering = 'index',
+
+add_camara_text_utils_to_class(TramiteProyecto)
+
