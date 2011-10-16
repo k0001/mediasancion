@@ -34,11 +34,11 @@ from mediasancion.utils.models import StandardAbstractModel
 CAMARA_CHOICES = (
     ('S', _(u"Senadores")),
     ('D', _(u"Diputados")), )
-CAMARA_CHOICES_DISPLAYS = dict(CAMARA_CHOICES)
-CAMARA_CHOICES_LONG_DISPLAYS = {
+CAMARA_DISPLAYS_SHORT = dict(CAMARA_CHOICES)
+CAMARA_DISPLAYS_LONG = {
     'S': _(u"Cámara de Senadores"),
     'D': _(u"Cámara de Diputados") }
-CAMARA_CHOICES_SLUGS = {
+CAMARA_SLUGS = {
     'S': u'senadores',
     'D': u'diputados' }
 
@@ -60,7 +60,7 @@ class Comision(StandardAbstractModel):
 
     @property
     def camara_slug(self):
-        return CAMARA_CHOICES_SLUGS[self.camara]
+        return CAMARA_SLUGS[self.camara]
 
     @models.permalink
     def get_absolute_url(self):
@@ -231,12 +231,12 @@ class Proyecto(StandardAbstractModel):
 
     @property
     def camara_origen_slug(self):
-        return CAMARA_CHOICES_SLUGS[self.camara_origen]
+        return CAMARA_SLUGS[self.camara_origen]
 
     @property
     def camara_revisora_slug(self):
         if self.camara_revisora:
-            return CAMARA_CHOICES_SLUGS[self.camara_revisora]
+            return CAMARA_SLUGS[self.camara_revisora]
 
     @property
     def firmante(self):

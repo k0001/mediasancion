@@ -27,7 +27,7 @@ from restsources.shortcuts import payload_from_form_errors
 from django.conf import settings
 
 from mediasancion.congreso.models import Proyecto, Comision, Legislador, \
-            MembresiaComision, FirmaProyecto, CAMARA_CHOICES_SLUGS
+            MembresiaComision, FirmaProyecto, CAMARA_SLUGS
 from mediasancion.api0.core.restsources import DistritoRestsource, PartidoRestsource, \
             BloqueRestsource,PersonaRestsource
 

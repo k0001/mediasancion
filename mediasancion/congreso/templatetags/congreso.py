@@ -19,8 +19,8 @@
 
 from django import template
 
-from ..models import CAMARA_CHOICES_LONG_DISPLAYS, \
-                     CAMARA_CHOICES_DISPLAYS, CAMARA_CHOICES_SLUGS
+from ..models import CAMARA_DISPLAYS_LONG, \
+                     CAMARA_DISPLAYS_SHORT, CAMARA_SLUGS
 
 
 register = template.Library()
@@ -28,7 +28,7 @@ register = template.Library()
 
 @register.filter
 def camara_display(camara_slug_or_key):
-    displays = CAMARA_CHOICES_DISPLAYS
+    displays = CAMARA_DISPLAYS_SHORT
     if camara_slug_or_key in ('S', 'senadores'):
         return displays['S']
     elif camara_slug_or_key in ('D', 'diputados'):
@@ -39,7 +39,7 @@ def camara_display(camara_slug_or_key):
 
 @register.filter
 def camara_display_long(camara_slug_or_key):
-    displays = CAMARA_CHOICES_LONG_DISPLAYS
+    displays = CAMARA_DISPLAYS_LONG
     if camara_slug_or_key in ('S', 'senadores'):
         return displays['S']
     elif camara_slug_or_key in ('D', 'diputados'):
@@ -50,7 +50,7 @@ def camara_display_long(camara_slug_or_key):
 
 @register.filter
 def camara_slug(camara_key):
-    if camara_key in CAMARA_CHOICES_SLUGS:
-        return CAMARA_CHOICES_SLUGS[camara_key]
+    if camara_key in CAMARA_SLUGS:
+        return CAMARA_SLUGS[camara_key]
     else:
         return u''

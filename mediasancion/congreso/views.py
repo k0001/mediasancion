@@ -26,7 +26,7 @@ from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 
 from .models import (Comision, Proyecto,
-                     CAMARA_CHOICES_DISPLAYS, CAMARA_CHOICES_SLUGS)
+                     CAMARA_DISPLAYS_SHORT, CAMARA_SLUGS)
 from django_gqslpagination import GroupedQuerySetLaxPaginator, EmptyPage
 
 
@@ -57,8 +57,8 @@ def proyecto_list(request, camara=None):
     breadcrumbs = []
     if camara:
         breadcrumbs.append(
-            (reverse('congreso:%s:detail' % CAMARA_CHOICES_SLUGS[camara]),
-                 CAMARA_CHOICES_DISPLAYS[camara]))
+            (reverse('congreso:%s:detail' % CAMARA_SLUGS[camara]),
+                 CAMARA_DISPLAYS_SHORT[camara]))
 
     c = { 'title': _(u"Proyectos"),
           'breadcrumbs': breadcrumbs,
@@ -80,9 +80,9 @@ def proyecto_detail(request, camara, expediente):
     origen_pov = proyecto.camara_origen == camara
 
     breadcrumbs = (
-        (reverse('congreso:%s:detail' % CAMARA_CHOICES_SLUGS[camara]),
-            CAMARA_CHOICES_DISPLAYS[camara]),
-        (reverse('congreso:%s:proyectos:list' % CAMARA_CHOICES_SLUGS[camara]),
+        (reverse('congreso:%s:detail' % CAMARA_SLUGS[camara]),
+            CAMARA_DISPLAYS_SHORT[camara]),
+        (reverse('congreso:%s:proyectos:list' % CAMARA_SLUGS[camara]),
             _(u"Proyectos")), )
 
     title = _(u"Proyecto de %(tipo)s %(expediente)s") % {
@@ -118,11 +118,11 @@ def comision_list_by_camara(request, camara):
            .order_by('nombre')
 
     breadcrumbs = (
-        (reverse('congreso:%s:detail' % CAMARA_CHOICES_SLUGS[camara]),
-            CAMARA_CHOICES_DISPLAYS[camara]), )
+        (reverse('congreso:%s:detail' % CAMARA_SLUGS[camara]),
+            CAMARA_DISPLAYS_SHORT[camara]), )
 
     title = _(u"Comisiones en Camara de %(camara)s") % {
-                    'camara': CAMARA_CHOICES_DISPLAYS[camara].capitalize() }
+                    'camara': CAMARA_DISPLAYS_SHORT[camara].capitalize() }
 
     c = { 'title': title,
           'breadcrumbs': breadcrumbs,
@@ -137,9 +137,9 @@ def comision_detail(request, camara, slug):
     comision = get_object_or_404(Comision, camara=camara, slug=slug)
 
     breadcrumbs = (
-        (reverse('congreso:%s:detail' % CAMARA_CHOICES_SLUGS[camara]),
-            CAMARA_CHOICES_DISPLAYS[camara]),
-        (reverse('congreso:%s:comisiones:list' % CAMARA_CHOICES_SLUGS[camara]),
+        (reverse('congreso:%s:detail' % CAMARA_SLUGS[camara]),
+            CAMARA_DISPLAYS_SHORT[camara]),
+        (reverse('congreso:%s:comisiones:list' % CAMARA_SLUGS[camara]),
             _(u"Comisiones")), )
 
     c = { 'title': comision.nombre,
