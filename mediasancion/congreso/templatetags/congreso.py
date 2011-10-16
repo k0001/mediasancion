@@ -19,8 +19,8 @@
 
 from django import template
 
-from ..models import CAMARA_DISPLAYS_LONG, \
-                     CAMARA_DISPLAYS_SHORT, CAMARA_SLUGS
+from ..models import CAMARA_DISPLAYS_LONG, CAMARA_DISPLAYS_SHORT, \
+                     CAMARA_SLUGS, CAMARA_LEGISLADOR_TIPO_DISPLAY_PLURAL
 
 
 register = template.Library()
@@ -54,3 +54,10 @@ def camara_slug(camara_key):
         return CAMARA_SLUGS[camara_key]
     else:
         return u''
+
+@register.filter
+def camara_legislador_tipo_display_plural(camara_key):
+    if camara_key in CAMARA_LEGISLADOR_TIPO_DISPLAY_PLURAL:
+        return CAMARA_LEGISLADOR_TIPO_DISPLAY_PLURAL[camara_key]
+    else:
+        return _(u'Legisladores')

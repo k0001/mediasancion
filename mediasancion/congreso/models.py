@@ -42,6 +42,9 @@ CAMARA_DISPLAYS_LONG = {
 CAMARA_SLUGS = {
     'S': u'senadores',
     'D': u'diputados' }
+CAMARA_LEGISLADOR_TIPO_DISPLAY_PLURAL = {
+    'S': _(u'Senadores'),
+    'D': _(u'Diputados') }
 
 
 # This could be a metaclass, but I'm lazy right now.
@@ -75,7 +78,6 @@ def add_camara_text_utils_to_class(cls):
             cls.add_to_class('get_%s_display_short' % f.name,
                 curry(_get_display, attr=f.name,
                                     displays=CAMARA_DISPLAYS_SHORT))
-
 
 
 class Comision(StandardAbstractModel):

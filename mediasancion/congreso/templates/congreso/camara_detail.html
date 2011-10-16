@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load utils_html %}
+{% load congreso %}
+
+{% block title %}{{ camara|camara_display_long }}{% endblock %}
+{% block htmltitle %}{{ camara|camara_display_long }}{% endblock %}
+
+{% block bodyid %}camara-detail{% endblock %}
+
+{% block content %}
+  <article class="camara" id="{{ camara|camara_slug }}">
+    <p><a href="{{ proyectos_href }}">{% trans "Proyectos" %}</a></p>
+    <p><a href="{{ legisladores_href }}">{{ camara|camara_legislador_tipo_display_plural }}</a></p>
+    <p><a href="{{ comisiones_href }}">{% trans "Comisiones" %}</a></p>
+  </article>
+{% endblock %}

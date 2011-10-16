@@ -25,13 +25,38 @@ from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
 
-from .models import (Comision, Proyecto,
+from .models import (Comision, Proyecto, Legislador,
                      CAMARA_DISPLAYS_SHORT, CAMARA_SLUGS)
+from .templatetags.congreso import camara_slug, camara_display_short, camara_display_long
 from django_gqslpagination import GroupedQuerySetLaxPaginator, EmptyPage
 
 
 def camara_detail(request, camara):
-    pass
+    if not camara in ('S', 'D'):
+        raise Http404
+
+    legisladores = Legislador.current.filter(camara=camara)
+    comisiones = Comision.objects.filter(camara=camara)
+    proyectos_originados = Proyecto.objects.filter(camara_origen=camara)
+    proyectos_revisados = Proyecto.objects.filter(camara_revisora=camara)
+
+    camara_slug = CAMARA_SLUGS[camara]
+
+    c = { 'camara': camara,
+          'camara_slug': camara_slug,
+
+          'legisladores': legisladores,
+          'legisladores_href': reverse('congreso:%s:legisladores:list' % camara_slug),
+
+          'comisiones': comisiones,
+          'comisiones_href': reverse('congreso:%s:comisiones:list' % camara_slug),
+
+          'proyectos_originados': proyectos_originados,
+          'proyectos_revisados': proyectos_revisados,
+          'proyectos_href': reverse('congreso:%s:proyectos:list' % camara_slug) }
+
+    return render_to_response('congreso/camara_detail.html', c,
+                              context_instance=RequestContext(request))
 
 
 
