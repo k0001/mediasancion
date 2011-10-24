@@ -63,7 +63,7 @@
     <p class="sumario">{{ proyecto.sumario }}</p>
 
     {# FIRMAS #}
-    {% if proyecto.firmaproyecto_set %}
+    {% if proyecto.firmaproyecto_set.count %}
       <section class="firmas">
         <h1>{% trans "Firmas" %}</h1>
         <ul>
@@ -84,7 +84,7 @@
       </section>
 
       {# TRÁMITES #}
-      {% if proyecto.tramiteproyecto_set %}
+      {% if proyecto.tramiteproyecto_set.count %}
         <section class="tramites">
           <h1>{% trans "Trámites" %}</h1>
           <ol>
@@ -107,7 +107,7 @@
       {% endif %}
 
       {# DICTÁMENES #}
-      {% if proyecto.dictamenproyecto_set %}
+      {% if proyecto.dictamenproyecto_set.count %}
         <section class="dictamenes">
           <h1>{% trans "Dictámenes de Comisión" %}</h1>
           <ol>
