@@ -23,7 +23,7 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.utils.translation import ugettext_lazy as _
-from .models import Bloque
+from .models import Bloque, Persona
 from ..congreso.models import Legislador
 
 
@@ -76,4 +76,22 @@ def distrito_detail(request, slug):
     pass
 
 def persona_detail(request, slug):
-    pass
+    persona = get_object_or_404(Persona, slug=slug)
+
+    now = datetime.utcnow()
+    try:
+        legislador_current = persona.legislador_set.get(inicio__lte=now, fin__gte=now)
+    except Legislador.DoesNotExist:
+        legislador_current = None
+
+    legislador_past_list = persona.legislador_set.order_by('-fin', '-inicio')
+    if legislador_current:
+        legislador_past_list = legislador_past_list.exclude(pk=legislador_current.pk)
+
+    c = { 'title': persona.full_name,
+          'persona': persona,
+          'legislador_current': legislador_current,
+          'legislador_past_list': legislador_past_list }
+
+    return render_to_response('core/persona_detail.html', c,
+                              context_instance=RequestContext(request))

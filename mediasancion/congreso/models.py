@@ -42,6 +42,10 @@ CAMARA_DISPLAYS_LONG = {
 CAMARA_SLUGS = {
     'S': u'senadores',
     'D': u'diputados' }
+CAMARA_LEGISLADOR_TIPO_DISPLAY = {
+    'S': _(u'Senador'),
+    'D': _(u'Diputado') }
+# TODO : CAMARA_LEGISLADOR_TIPO_DISPLAY_FEMALE
 CAMARA_LEGISLADOR_TIPO_DISPLAY_PLURAL = {
     'S': _(u'Senadores'),
     'D': _(u'Diputados') }

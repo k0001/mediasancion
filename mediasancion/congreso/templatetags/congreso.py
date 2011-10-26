@@ -18,9 +18,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django import template
+from django.utils.translation import ugettext_lazy as _
 
 from ..models import CAMARA_DISPLAYS_LONG, CAMARA_DISPLAYS_SHORT, \
-                     CAMARA_SLUGS, CAMARA_LEGISLADOR_TIPO_DISPLAY_PLURAL
+                     CAMARA_SLUGS, CAMARA_LEGISLADOR_TIPO_DISPLAY_PLURAL, \
+                     CAMARA_LEGISLADOR_TIPO_DISPLAY
 
 
 register = template.Library()
@@ -50,14 +52,15 @@ def camara_display_long(camara_slug_or_key):
 
 @register.filter
 def camara_slug(camara_key):
-    if camara_key in CAMARA_SLUGS:
-        return CAMARA_SLUGS[camara_key]
-    else:
-        return u''
+    return CAMARA_SLUGS.get(camara_key, u'')
+
+
+@register.filter
+def camara_legislador_tipo_display(camara_key):
+    return CAMARA_LEGISLADOR_TIPO_DISPLAY.get(camara_key, _(u'Legislador'))
+
 
 @register.filter
 def camara_legislador_tipo_display_plural(camara_key):
-    if camara_key in CAMARA_LEGISLADOR_TIPO_DISPLAY_PLURAL:
-        return CAMARA_LEGISLADOR_TIPO_DISPLAY_PLURAL[camara_key]
-    else:
-        return _(u'Legisladores')
+    return CAMARA_LEGISLADOR_TIPO_DISPLAY_PLURAL.get(camara_key,
+                                                     _(u'Legisladores'))

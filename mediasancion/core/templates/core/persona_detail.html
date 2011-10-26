@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load utils_html %}
+{% load congreso %}
+
+{% block bodyid %}persona-detail{% endblock %}
+
+{% block content %}
+  <article class="persona" id="{{ persona.uuid }}">
+
+    <dl class="data">
+      {% if persona.documento_tipo and persona.documento_numero %}
+        <dt class="documento">{% trans "Documento de Identidad" %}</dt>
+        <dd class="documento">
+          <span class="documento-tipo">{{ persona.documento_tipo }}</span>
+          <span class="documento-numero">{{ persona.documento_numero }}</span>
+        </dd>
+      {% endif %}
+      {% if persona.email %}
+        <dt class="email">{% trans "Email" %}</dt>
+        <dd class="email">{{ persona.email }}</dd>
+      {% endif %}
+      {% if persona.telefono %}
+        <dt class="telefono">{% trans "Teléfono" %}</dt>
+        <dd class="telefono">{{ persona.telefono }}</dd>
+      {% endif %}
+      {% if persona.website %}
+        <dt class="website">{% trans "Sitio Web" %}</dt>
+        <dd class="website">{{ persona.website }}</dd>
+      {% endif %}
+    </dl>
+
+    {% if legislador_current %}
+      <section class="legislador-current legislador">
+        <h1>
+          {% blocktrans with legislador_tipo=legislador_current.camara|camara_legislador_tipo_display distrito=legislador_current.distrito|objlink %}
+            Actual {{ legislador_tipo }} de {{ distrito }}
+          {% endblocktrans %}
+        </h1>
+        <div class="details">
+          <p>
+            {% trans "Por el bloque" %} <span class="bloque" data-bloque="{{ legislador_current.bloque.uuid }}">{{ legislador_current.bloque|objlink }}</span>,
+            {% trans "desde" %} <span class="inicio" data-fecha-inicio="{{ legislador_current.inicio|date:"c" }}">{{ legislador_current.inicio|date:"F Y" }}</span>
+            <strong>{% trans "hasta" %} <span class="fin" data-fecha-fin="{{ legislador_current.fin|date:"c" }}">{{ legislador_current.fin|date:"F Y" }}</span></strong>.
+          </p>
+          <p>Asistencia: 25 de 30 reuniones durante su cargo.*</p>
+
+        <h2>{% trans "Comisiones a las que pertenece" %}*</h2>
+        <ul>
+          <!-- MOCKUP DATA -->
+          <li><a href="/diputados/comisiones/relaciones-exteriores-y-culto/">Relaciones exteriores y culto</a></li>
+          <li><a href="/diputados/comisiones/legislacion-general/">Legislacion general</a></li>
+          <li><a href="/diputados/comisiones/deportes/">Deportes</a></li>
+          <li><a href="/diputados/comisiones/presupuesto-y-hacienda/">Presupuesto y hacienda</a></li>
+        </ul>
+
+        <h2>{% trans "Proyectos presentados" %}*</h2>
+        <ul>
+          <!-- MOCKUP DATA -->
+          <li><p><a href="/diputados/proyectos/5195-D-2011/">5195-D-2011</a>: Solicitar al poder ejecutivo disponga las medidas necesarias para la creacion de la embajada argentina en la republica de azerbaiyan.</p></li>
+          <li><p><a href="/diputados/proyectos/5194-D-2011/">5194-D-2011</a>: Tranferencia a titulo gratuito del predio propiedad del estado nacional ubicado en chilecito, provincia de la rioja, a favor del club atletico, cultural y deportivo san buenaventura de la mencionada provincia.</p></li>
+          <li><p><a href="/diputados/proyectos/5193-D-2011/">5193-D-2011</a>: Solicitar al poder ejecutivo disponga la inclusion en el programa nacional &quot;mas escuelas ii&quot;, la construccion y equipamiento del edificio de la escuela 389 &quot;tinkunaco&quot;, en la provincia de la rioja.</p></li>
+          <li><p><a href="/diputados/proyectos/5192-D-2011/">5192-D-2011</a>: Expresar beneplacito por la inauguracion de la construccion del &quot;polo cientifico y tecnologico&quot;, en terrenos de las ex - bodegas giol, en la ciudad autonoma de buenos aires.</p></li>
+        </ul>
+
+        <h2>{% trans "Proyectos firmados" %}*</h2>
+        <ul>
+          <!-- MOCKUP DATA -->
+          <li><p><a href="/diputados/proyectos/5194-D-2011/">5194-D-2011</a>: Tranferencia a titulo gratuito del predio propiedad del estado nacional ubicado en chilecito, provincia de la rioja, a favor del club atletico, cultural y deportivo san buenaventura de la mencionada provincia.</p></li>
+          <li><p><a href="/diputados/proyectos/5193-D-2011/">5193-D-2011</a>: Solicitar al poder ejecutivo disponga la inclusion en el programa nacional &quot;mas escuelas ii&quot;, la construccion y equipamiento del edificio de la escuela 389 &quot;tinkunaco&quot;, en la provincia de la rioja.</p></li>
+          <li><p><a href="/diputados/proyectos/5192-D-2011/">5192-D-2011</a>: Expresar beneplacito por la inauguracion de la construccion del &quot;polo cientifico y tecnologico&quot;, en terrenos de las ex - bodegas giol, en la ciudad autonoma de buenos aires.</p></li>
+          <li><p><a href="/diputados/proyectos/5195-D-2011/">5195-D-2011</a>: Solicitar al poder ejecutivo disponga las medidas necesarias para la creacion de la embajada argentina en la republica de azerbaiyan.</p></li>
+        </ul>
+
+      </section>
+    {% endif %}
+
+  </article>
+
+    {% if legislador_past_list.count %}
+      <section class="legislador-past">
+        <h2>{% trans "Cargos anteriores" %}</h1>
+        <ul>
+          {% for legislador in legislador_past_list %}
+            <li class="legislador" id="{{ legislador.uuid }}">
+              <p>
+                {% if legislador.inicio or legislador.fin %}
+                  <span class="fecha">
+                    {% filter capfirst %}
+                      {% if legislador.inicio %}
+                        desde <span class="inicio" data-fecha-inicio="{{ legislador.inicio|date:"c" }}">{{ legislador.inicio|date:"F Y" }}</span>
+                      {% endif %}
+                      {% if legislador.fin %}
+                        hasta <span class="fin" data-fecha-fin="{{ legislador.fin|date:"c" }}">{{ legislador.fin|date:"F Y" }}</span>
+                      {% endif %}
+                    {% endfilter %}
+                  </span>
+                  —
+                {% endif %}
+                <span class="cargo" data-camara="{{ legislador.camara }}">{{ legislador.camara|camara_legislador_tipo_display }}</span>
+                {% trans "de" %}
+                <span class="distrito" data-distrito="{{ legislador.distrito.uuid }}">{{ legislador.distrito|objlink }}</span>,
+                {% trans "por el bloque" %}
+                <span class="bloque" data-bloque="{{ legislador.bloque.uuid }}">{{ legislador.bloque|objlink }}</span>.
+              </p>
+            </li>
+          {% endfor %}
+        </ul>
+      </section>
+    {% endif %}
+
+  </article>
+{% endblock %}
