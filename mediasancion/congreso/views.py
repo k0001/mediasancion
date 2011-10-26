@@ -146,7 +146,7 @@ def comision_list_by_camara(request, camara):
         (reverse('congreso:%s:detail' % CAMARA_SLUGS[camara]),
             CAMARA_DISPLAYS_SHORT[camara]), )
 
-    title = _(u"Comisiones en Camara de %(camara)s") % {
+    title = _(u"Comisiones en Cámara de %(camara)s") % {
                     'camara': CAMARA_DISPLAYS_SHORT[camara].capitalize() }
 
     c = { 'title': title,
