@@ -53,7 +53,7 @@ class DistritoRestsource(Restsource):
         return obj.api0_url
 
     def get_legisladores(self, obj):
-        return obj.legislador_est
+        return obj.legislador_set
 
     def filter(self, queryset, request, **params):
         if request.REQUEST.get('nombre'):
@@ -87,7 +87,7 @@ class PartidoRestsource(Restsource):
         return obj.api0_url
 
     def get_legisladores(self, obj):
-        return obj.legislador_est
+        return obj.legislador_set
 
     def filter(self, queryset, request, **params):
         if request.REQUEST.get('nombre'):
