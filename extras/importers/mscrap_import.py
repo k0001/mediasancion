@@ -59,13 +59,16 @@ def store_legislador_item(x):
         distrito.resource_url = x['resource_url']
         distrito.save()
 
-    try:
-        bloque = Bloque.objects.get(nombre=x['bloque_nombre'])
-    except Bloque.DoesNotExist:
-        bloque = Bloque(nombre=x['bloque_nombre'], origin=AUDIT_ORIGIN)
-        bloque.resource_source = x['resource_source']
-        bloque.resource_url = x['resource_url']
-        bloque.save()
+    if x.get('bloque_nombre'):
+        try:
+            bloque = Bloque.objects.get(nombre=x['bloque_nombre'])
+        except Bloque.DoesNotExist:
+            bloque = Bloque(nombre=x['bloque_nombre'], origin=AUDIT_ORIGIN)
+            bloque.resource_source = x['resource_source']
+            bloque.resource_url = x['resource_url']
+            bloque.save()
+    else:
+        bloque = None
 
     if x.get('partido_nombre'):
         try:
@@ -268,8 +271,8 @@ def store_firmaproyecto_item(x):
 
         try:
             legislador = Legislador.objects.get(persona=persona,
-                                          bloque=bloque,
-                                          distrito=distrito)
+                                                bloque=bloque,
+                                                distrito=distrito)
         except Legislador.DoesNotExist:
             # if legislador created, inicio and fin will be missing. Whatever.
             legislador = Legislador(persona=persona,
