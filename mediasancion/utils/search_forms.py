@@ -25,6 +25,11 @@ from haystack.forms import SearchForm
 
 
 class StandardSearchForm(SearchForm):
+    def clean_q(self):
+        data = self.cleaned_data.get('q')
+        if data is not None:
+            return data.strip()
+
     @property
     def q_nfkd(self):
         # We are OK using NFKD, since our texts are in spanish :)

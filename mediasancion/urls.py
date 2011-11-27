@@ -21,16 +21,14 @@ from django.conf import settings
 from django.conf.urls.defaults import *
 from django.contrib import admin
 
-from haystack.views import SearchView, search_view_factory
-
+from haystack.views import search_view_factory
 from .utils.search_forms import StandardSearchForm
 
 admin.autodiscover()
 
 
 urlpatterns = patterns('',
-    url(r'^search/$', search_view_factory(view_class=SearchView,
-                                          form_class=StandardSearchForm),
+    url(r'^search/$', 'mediasancion.search_views.search',
         name='search'),
 
     url(r'^api/0/', include('mediasancion.api0.urls',
