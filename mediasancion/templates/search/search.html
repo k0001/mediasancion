@@ -26,28 +26,38 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 {% block headtitle %}{{ query }}{% endblock %}
 {% block htmltitle %}
-  {% blocktrans with query as query %}
-    <span>Search Results for</span> {{ query }}
-  {% endblocktrans %}
+  <span>{% trans "Búsqueda" %}</span> {{ query }}
 {% endblock %}
 
 {% block content %}
   <div id="search-results" class="content-wrap">
     {% if query %}
-      {% for result in page.object_list %}
-        {{ result.rendered|safe }}
-      {% empty %}
-        <p>{% trans "No results found. Try a different search." %}</p>
-      {% endfor %}
+      {% if results.core_distrito %}
+        <h2>{% trans "Distritos" %}</h2>
+        <div class="distritos">
+          {% for result in results.core_distrito %}
+              {{ result.rendered|safe }}
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% with page=results.congreso_proyecto.page %}
+        {% if page.object_list %}
+          <h2>{% trans "Proyectos" %}</h2>
+          {% for result in page.object_list %}
+              {{ result.rendered|safe }}
+          {% endfor %}
+          {% if page.has_previous or page.has_next %}
+            <div class="pagination">
+             {% if page.has_previous %}<a href="?q={{ query }}&amp;page={{ page.previous_page_number }}">{% endif %}« {% trans "Previous" %}{% if page.has_previous %}</a>{% endif %}
+             {% if page.has_next %}<a href="?q={{ query }}&amp;page={{ page.next_page_number }}">{% endif %}{% trans "Next" %} »{% if page.has_next %}</a>{% endif %}
+            </div>
+          {% endif %}
+        {% endif %}
+      {% endwith %}
 
     {% else %}
         {# Show some example queries to run, maybe query syntax, something else? #}
     {% endif %}
   </div>
-  {% if page.has_previous or page.has_next %}
-    <div class="pagination">
-     {% if page.has_previous %}<a href="?q={{ query }}&amp;page={{ page.previous_page_number }}">{% endif %}« {% trans "Previous" %}{% if page.has_previous %}</a>{% endif %}
-     {% if page.has_next %}<a href="?q={{ query }}&amp;page={{ page.next_page_number }}">{% endif %}{% trans "Next" %} »{% if page.has_next %}</a>{% endif %}
-    </div>
-  {% endif %}
 {% endblock %}
