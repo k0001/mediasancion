@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block headtitle %}MediaSanción{% endblock %}
+
+{% block content %}
+  <!-- TODO take this out from here!!! -->
+  <style>
+    p { margin-bottom: 1em; }
+  </style>
+
+
+  <!-- TODO fix this ugly HTML -->
+
+  <div>
+    <ul>
+      <li><a href="{% url core:bloques:list %}">{% trans "Bloques" %}</a></li>
+      <li><a href="{% url congreso:proyectos:list %}">{% trans "Proyectos" %}</a></li>
+      <li><a href="{% url congreso:legisladores:list %}">{% trans "Legisladores" %}</a></li>
+    </ul>
+  </div>
+
+  <p>
+    <h3>Sólo en <a href="{% url congreso:senadores:detail %}">{% trans "Cámara de Senadores" %}</a></h3>
+    <ul>
+      <li><a href="{% url congreso:senadores:legisladores:list %}">{% trans "Senadores" %}</a></li>
+      <li><a href="{% url congreso:senadores:proyectos:list %}">{% trans "Proyectos" %}</a></li>
+      <li><a href="{% url congreso:senadores:comisiones:list %}">{% trans "Comisiones" %}</a></li>
+    </ul>
+  </p>
+
+  <p>
+    <h3>Sólo en <a href="{% url congreso:diputados:detail %}">{% trans "Cámara de Diputados" %}</a></h3>
+    <ul>
+      <li><a href="{% url congreso:diputados:legisladores:list %}">{% trans "Diputados" %}</a></li>
+      <li><a href="{% url congreso:diputados:proyectos:list %}">{% trans "Proyectos" %}</a></li>
+      <li><a href="{% url congreso:diputados:comisiones:list %}">{% trans "Comisiones" %}</a></li>
+    </ul>
+  </p>
+
+
+{% endblock %}
+
+
