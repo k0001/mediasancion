@@ -24,10 +24,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 {% block bodyid %}search-results-page{% endblock %}
 
-{% block headtitle %}{{ query }}{% endblock %}
-{% block htmltitle %}
-  <span>{% trans "Búsqueda" %}</span> {{ query }}
-{% endblock %}
+{% block headtitle %}{{ query }} - MediaSanción{% endblock %}
+{% block htmltitle %}{{ query }}{% endblock %}
 
 {% block content %}
   <div id="search-results" class="content-wrap">
