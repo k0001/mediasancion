@@ -29,6 +29,8 @@ admin.autodiscover()
 
 
 urlpatterns = patterns('',
+    url(r'^$', 'mediasancion.views.home', name='home'),
+
     url(r'^search/$', search_view_factory(view_class=SearchView,
                                           form_class=StandardSearchForm),
         name='search'),

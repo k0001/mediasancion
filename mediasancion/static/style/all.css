@@ -47,9 +47,9 @@ body {
     margin: auto; }
     #nav-out #nav h1 {
       font-family: "Trebuchet MS";
+      padding-left: 8px;
       padding-right: 8px;
       padding-bottom: 8px;
-      text-align: right;
       vertical-align: bottom;
       font-size: 3em;
       color: white;
@@ -94,7 +94,7 @@ body {
   margin-top: 48px;
   margin-bottom: 30px;
   text-align: center;
-  font-size: 0.9em;
+  font-size: 0.7em;
   color: #474747; }
   #footer ul.links {
     list-style: none; }
