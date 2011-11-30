@@ -23,8 +23,13 @@ from django import forms
 
 from haystack.forms import SearchForm
 
+from mediasancion.congreso.models import Proyecto
 
-class StandardSearchForm(SearchForm):
+
+class MSSearchForm(SearchForm):
+    proyecto_tipo = forms.MultipleChoiceField(choices=Proyecto.TIPO_CHOICES,
+                                              required=False)
+
     def clean_q(self):
         data = self.cleaned_data.get('q')
         if data is not None:
@@ -49,3 +54,4 @@ class StandardSearchForm(SearchForm):
             sqs = sqs.load_all()
 
         return sqs
+

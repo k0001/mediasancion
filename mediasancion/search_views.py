@@ -27,7 +27,7 @@ from django.utils.translation import ugettext_lazy as _
 
 import haystack
 
-from .utils.search_forms import StandardSearchForm
+from .search_forms import MSSearchForm
 
 
 
@@ -42,34 +42,46 @@ def split_searchqueryset_by_contenttype(sqs, site=haystack.site):
 # I WAS REALLY TIRED WHEN I WROTE THE FOLLOWING LINES. SORRY ABOUT THE MESS.
 def search(request):
     c = {}
-    c['form'] = form = StandardSearchForm(request.GET)
+    c['form'] = form = MSSearchForm(request.GET)
 
     if not form.is_valid():
+        print form.errors
         raise Http404 # Is OK. This shouldn't happen anyway (unless punks?)
 
     c['query'] = query = form.cleaned_data.get('q')
     if query:
         sqs = form.search()
-        c['all_results_count'] = len(sqs)
 
         try:
             c['page_num'] = page_num = int(request.GET.get('page', 1))
         except ValueError:
             raise Http404
 
+        c['all_results_count'] = 0
         c['current_page_results_count'] = 0
-        c['results'] = {'all': sqs}
+        c['results'] = {}
 
         sqs_per_ct = split_searchqueryset_by_contenttype(sqs)
-        if page_num == 1: # We only show non-Proyectos results in the first page.
+
+        # Proyectos
+        proyectos_sqs = sqs_per_ct['congreso.proyecto']
+        pts = form.cleaned_data.get('proyecto_tipo')
+        if pts:
+            proyectos_sqs = proyectos_sqs.filter(tipo__in=pts)
+            c['all_results_count'] += len(proyectos_sqs)
+
+        # Non proyectos
+        if page_num == 1: # We don't show non-Proyectos results in non-first pages.
             for k,v in sqs_per_ct.items():
-                if k != 'congreso.proyecto':
-                    v1 = v.load_all()
-                    c['results'][k.replace('.', '_')] = v1
-                    c['current_page_results_count'] += len(v1)
+                v1 = v.load_all()
+                c['results'][k.replace('.', '_')] = v1
+                v1_length = len(v1)
+                c['current_page_results_count'] += v1_length
+                c['all_results_count'] += v1_length
+
 
         # paginate proyectos
-        proyectos_paginator = Paginator(sqs_per_ct['congreso.proyecto'].load_all(), 30,
+        proyectos_paginator = Paginator(proyectos_sqs.load_all(), 30,
                                         allow_empty_first_page=True)
         try:
             proyectos_page = proyectos_paginator.page(page_num)

@@ -32,6 +32,7 @@ ADMINS = (
 MANAGERS = ADMINS
 
 INTERNAL_IPS = (
+    '192.168.100.1',
     '172.0.0.1',)
 
 DATABASES = {

@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 {% block headtitle %}{{ query }} - MediaSanción{% endblock %}
 {% block htmltitle %}{{ query }}{% endblock %}
 
+
 {% block content %}
   <div id="search-results" class="content-wrap">
     {% if query %}
@@ -42,6 +43,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       {% with page=results.congreso_proyecto.page %}
         {% if page.object_list %}
           <h2>{% trans "Proyectos" %}</h2>
+          {% comment %} TODO: NOT WIRED YET
+          <div class="filters">
+            <ul class="toggles">
+              <li><label><input type="checkbox" name="proyecto_tipo" value="L" checked="checked" />{% trans "de Ley" %}</label></li>
+              <li><label><input type="checkbox" name="proyecto_tipo" value="D" checked="checked" />{% trans "de Declaración" %}</label></li>
+              <li><label><input type="checkbox" name="proyecto_tipo" value="R" checked="checked" />{% trans "de Resolución" %}</label></li>
+              <li><label><input type="checkbox" name="proyecto_tipo" value="C" checked="checked" />{% trans "de Comunicación" %}</label></li>
+            </ul>
+          </div>
+          {% endcomment %}
           {% for result in page.object_list %}
               {{ result.rendered|safe }}
           {% endfor %}
