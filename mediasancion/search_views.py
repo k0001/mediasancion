@@ -33,10 +33,10 @@ from .search_forms import MSSearchForm
 
 
 def split_searchqueryset_by_contenttype(sqs, site=haystack.site):
-    cts = ['{}.{}'.format(m._meta.app_label, m._meta.module_name)
+    cts = ['%s.%s' % (m._meta.app_label, m._meta.module_name)
            for m in site.get_indexed_models()]
     ct_field = haystack.constants.DJANGO_CT
-    return {ct: sqs.filter(**{ct_field: ct}) for ct in cts}
+    return dict((ct, sqs.filter(**{ct_field: ct})) for ct in cts)
 
 
 # I WAS REALLY TIRED WHEN I WROTE THE FOLLOWING LINES. SORRY ABOUT THE MESS.
