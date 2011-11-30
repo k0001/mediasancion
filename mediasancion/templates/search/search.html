@@ -40,6 +40,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         </div>
       {% endif %}
 
+      {% if results.core_bloque %}
+        <h2>{% trans "Bloques" %}</h2>
+        <div class="bloques">
+          {% for result in results.core_bloque %}
+              {{ result.rendered|safe }}
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% if results.core_persona %}
+        <h2>{% trans "Personas" %}</h2>
+        <div class="personas">
+          {% for result in results.core_persona %}
+              {{ result.rendered|safe }}
+          {% endfor %}
+        </div>
+      {% endif %}
+
       {% with page=results.congreso_proyecto.page %}
         {% if page.object_list %}
           <h2>{% trans "Proyectos" %}</h2>

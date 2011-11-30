@@ -1,0 +1,4 @@
+{{ object.nombre }}
+{{ object.apellido }}
+{{ object.email }}
+{{ object.documento_numero }}

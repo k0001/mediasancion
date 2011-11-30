@@ -19,16 +19,20 @@
 
 from haystack import site
 
-from .models import Distrito, Partido
+from .models import Distrito, Bloque, Persona
 from ..utils.search_indexes import StandardSearchIndex
 
 
 class DistritoIndex(StandardSearchIndex):
     pass
 
-class PartidoIndex(StandardSearchIndex):
+class BloqueIndex(StandardSearchIndex):
+    pass
+
+class PersonaIndex(StandardSearchIndex):
     pass
 
 site.register(Distrito, DistritoIndex)
-site.register(Partido, PartidoIndex)
+site.register(Bloque, BloqueIndex)
+site.register(Persona, PersonaIndex)
 

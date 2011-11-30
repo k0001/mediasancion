@@ -1,2 +1,0 @@
-{% load utils_html %}
-<div class="partido" id="{{ object.uuid }}">{{ object|objlink }}</div>
