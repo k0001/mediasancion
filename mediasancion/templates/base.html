@@ -34,7 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <body id="{% block bodyid %}{% endblock %}">
       <div id="header-out">
         <div id="header">
-          <img id="main-logo" src="{{ MEDIA_URL }}style/img/mediasancion_logo.png" />
+          <a href="{% url home %}"><img id="main-logo" src="{{ MEDIA_URL }}style/img/mediasancion_logo.png" /></a>
           {% include "_header_search.html" %}
         </div>
       </div>

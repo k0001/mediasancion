@@ -5,10 +5,10 @@
 {% block htmltitle %}{{ title }}{% endblock %}
 
 {% block content %}
-    <ul id="legisladors">
+    <ul id="legisladores">
     {% for x in legislador_list %}
-        <li class="legislador" id="legislador-{{ x.id }}">
-            <img src="{{ x.foto_thumb_url }}" alt="thumb" />{{ x|objlink }}
+        <li class="legislador" id="{{ x.uuid }}">
+          {{ x.persona|objlink }}
         </li>
     {% endfor %}
     </ul>

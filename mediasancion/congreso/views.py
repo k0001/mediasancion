@@ -27,7 +27,8 @@ from django.utils.translation import ugettext_lazy as _
 
 from .models import (Comision, Proyecto, Legislador,
                      CAMARA_DISPLAYS_SHORT, CAMARA_SLUGS)
-from .templatetags.congreso import camara_slug, camara_display_short, camara_display_long
+from .templatetags.congreso import camara_slug, camara_display_short, camara_display_long, \
+          camara_legislador_tipo_display_plural
 from django_gqslpagination import GroupedQuerySetLaxPaginator, EmptyPage
 
 
@@ -177,5 +178,21 @@ def comision_detail(request, camara, slug):
 
 
 def legislador_list(request, camara=None):
-    pass
+    if not camara in ('S', 'D', None):
+        raise Http404
 
+    legisladores = Legislador.current.all()
+    breadcrumbs = []
+
+    if camara:
+        legisladores = legisladores.filter(camara=camara)
+        breadcrumbs.append(
+            (reverse('congreso:%s:detail' % CAMARA_SLUGS[camara]),
+                CAMARA_DISPLAYS_SHORT[camara]))
+
+    c = { 'title': camara_legislador_tipo_display_plural(camara),
+          'breadcrumbs': breadcrumbs,
+          'legislador_list': legisladores }
+
+    return render_to_response('congreso/legislador_list.html', c,
+                              context_instance=RequestContext(request))
