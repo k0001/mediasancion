@@ -43,33 +43,31 @@
             {% trans "desde" %} <span class="inicio" data-fecha-inicio="{{ legislador_current.inicio|date:"c" }}">{{ legislador_current.inicio|date:"F Y" }}</span>
             <strong>{% trans "hasta" %} <span class="fin" data-fecha-fin="{{ legislador_current.fin|date:"c" }}">{{ legislador_current.fin|date:"F Y" }}</span></strong>.
           </p>
-          <p>Asistencia: 25 de 30 reuniones durante su cargo.*</p>
+          <!-- MOCK data <p>Asistencia: 25 de 30 reuniones durante su cargo.*</p> -->
 
+        <!-- MOCK DATA
         <h2>{% trans "Comisiones a las que pertenece" %}*</h2>
         <ul>
-          <!-- MOCKUP DATA -->
           <li><a href="/diputados/comisiones/relaciones-exteriores-y-culto/">Relaciones exteriores y culto</a></li>
           <li><a href="/diputados/comisiones/legislacion-general/">Legislacion general</a></li>
           <li><a href="/diputados/comisiones/deportes/">Deportes</a></li>
           <li><a href="/diputados/comisiones/presupuesto-y-hacienda/">Presupuesto y hacienda</a></li>
-        </ul>
+        </ul> -->
 
+        <!-- MOCK DATA
         <h2>{% trans "Proyectos presentados" %}*</h2>
         <ul>
-          <!-- MOCKUP DATA -->
           <li><p><a href="/diputados/proyectos/5195-D-2011/">5195-D-2011</a>: Solicitar al poder ejecutivo disponga las medidas necesarias para la creacion de la embajada argentina en la republica de azerbaiyan.</p></li>
           <li><p><a href="/diputados/proyectos/5194-D-2011/">5194-D-2011</a>: Tranferencia a titulo gratuito del predio propiedad del estado nacional ubicado en chilecito, provincia de la rioja, a favor del club atletico, cultural y deportivo san buenaventura de la mencionada provincia.</p></li>
           <li><p><a href="/diputados/proyectos/5193-D-2011/">5193-D-2011</a>: Solicitar al poder ejecutivo disponga la inclusion en el programa nacional &quot;mas escuelas ii&quot;, la construccion y equipamiento del edificio de la escuela 389 &quot;tinkunaco&quot;, en la provincia de la rioja.</p></li>
           <li><p><a href="/diputados/proyectos/5192-D-2011/">5192-D-2011</a>: Expresar beneplacito por la inauguracion de la construccion del &quot;polo cientifico y tecnologico&quot;, en terrenos de las ex - bodegas giol, en la ciudad autonoma de buenos aires.</p></li>
-        </ul>
+        </ul> -->
 
-        <h2>{% trans "Proyectos firmados" %}*</h2>
+        <h2>{% trans "Proyectos firmados" %}</h2>
         <ul>
-          <!-- MOCKUP DATA -->
-          <li><p><a href="/diputados/proyectos/5194-D-2011/">5194-D-2011</a>: Tranferencia a titulo gratuito del predio propiedad del estado nacional ubicado en chilecito, provincia de la rioja, a favor del club atletico, cultural y deportivo san buenaventura de la mencionada provincia.</p></li>
-          <li><p><a href="/diputados/proyectos/5193-D-2011/">5193-D-2011</a>: Solicitar al poder ejecutivo disponga la inclusion en el programa nacional &quot;mas escuelas ii&quot;, la construccion y equipamiento del edificio de la escuela 389 &quot;tinkunaco&quot;, en la provincia de la rioja.</p></li>
-          <li><p><a href="/diputados/proyectos/5192-D-2011/">5192-D-2011</a>: Expresar beneplacito por la inauguracion de la construccion del &quot;polo cientifico y tecnologico&quot;, en terrenos de las ex - bodegas giol, en la ciudad autonoma de buenos aires.</p></li>
-          <li><p><a href="/diputados/proyectos/5195-D-2011/">5195-D-2011</a>: Solicitar al poder ejecutivo disponga las medidas necesarias para la creacion de la embajada argentina en la republica de azerbaiyan.</p></li>
+          {% for p in legislador_current.firmaproyecto_set.all %}
+            <li><p>{{ p.proyecto|objlink }}: {{ p.proyecto.sumario|lower|capfirst }}</p></li>
+          {% endfor %}
         </ul>
 
       </section>
