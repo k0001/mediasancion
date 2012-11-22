@@ -28,7 +28,7 @@ from restsources.restponders.xml import XMLRestponder
 from .restsources import DistritoRestsource, PartidoRestsource, BloqueRestsource, PersonaRestsource
 
 
-handler = Handler([JSONRestponder(), JSONPRestponder(), XMLRestponder()])
+handler = Handler([JSONRestponder(), JSONPRestponder()]) # , XMLRestponder()])
 
 
 

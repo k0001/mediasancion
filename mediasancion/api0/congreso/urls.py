@@ -29,7 +29,7 @@ from restsources.restponders.xml import XMLRestponder
 from .restsources import ProyectoRestsource, ComisionRestsource, LegisladorRestsource
 
 
-handler = Handler([JSONRestponder(), JSONPRestponder(), XMLRestponder()])
+handler = Handler([JSONRestponder(), JSONPRestponder()]) # , XMLRestponder()])
 
 
 # URL namespace: api0:congreso:proyectos
