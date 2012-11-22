@@ -22,16 +22,16 @@ from django.conf.urls.defaults import *
 from django.contrib import admin
 
 from haystack.views import search_view_factory
-from .utils.search_forms import StandardSearchForm
 
 admin.autodiscover()
 
 
 urlpatterns = patterns('',
-    url(r'^$', 'mediasancion.views.home', name='home'),
 
-    url(r'^search/$', 'mediasancion.search_views.search',
-        name='search'),
+# TEMPORARILY DISABLED. We are serving just the API right now.
+#    url(r'^$', 'mediasancion.views.home', name='home'),
+#    url(r'^search/$', 'mediasancion.search_views.search',
+#        name='search'),
 
     url(r'^api/0/', include('mediasancion.api0.urls',
                             namespace='api0', app_name='api0')),
@@ -39,11 +39,12 @@ urlpatterns = patterns('',
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/', include(admin.site.urls)),
 
-    url(r'', include('mediasancion.core.urls',
-                     namespace='core', app_name='core')),
-
-    url(r'', include('mediasancion.congreso.urls',
-                     namespace='congreso', app_name='congreso')),
+# TEMPORARILY DISABLED. We are serving just the API right now.
+#    url(r'', include('mediasancion.core.urls',
+#                     namespace='core', app_name='core')),
+#
+#    url(r'', include('mediasancion.congreso.urls',
+#                     namespace='congreso', app_name='congreso')),
 )
 
 
