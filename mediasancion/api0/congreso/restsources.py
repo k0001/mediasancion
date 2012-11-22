@@ -135,7 +135,7 @@ class MembresiaComisionRestsource(Restsource):
         'cargo')
 
     relations = {
-        'legislador': LegisladorRestsource(fields=['legislador']),
+        'legislador': LegisladorRestsource(primary_fields_only=True),
         'comision': ComisionRestsource(primary_fields_only=True), }
 
 
@@ -156,7 +156,7 @@ class FirmaProyectoRestsource(Restsource):
     @property
     def relations(self):
         return {
-            'legislador': LegisladorRestsource(fields=['legislador']),
+            'legislador': LegisladorRestsource(primary_fields_only=True),
             'proyecto': ProyectoRestsource(primary_fields_only=True) }
 
     def get_tipo(self, obj):
@@ -195,10 +195,14 @@ class ProyectoRestsource(Restsource):
         'remote_url',
         'remote_id')
 
-    relations = {
-        'comisiones': ComisionRestsource(primary_fields_only=True),
-        'firmantes': FirmaProyectoRestsource(excluded=['proyecto']) }
+    @property
+    def relations(self):
+        return {
+            'comisiones': ComisionRestsource(primary_fields_only=True),
+            'firmantes': LegisladorRestsource(primary_fields_only=True) }
 
     def get_url(self, obj):
         return obj.api0_url
 
+    def get_firmantes(self, obj):
+        return obj.firmantes_set
