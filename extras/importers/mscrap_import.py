@@ -17,6 +17,16 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+
+# It's recommended that you import items in the following order:
+#  1. LegisladorItem
+#  2. ProyectoItem
+#  3. FirmaProyecto|TramiteProyectoItem|DictamenProyectoItem
+
+# This program is ugly as shit.
+
+
+
 import json
 import logging
 import optparse
@@ -31,6 +41,7 @@ from datetime import datetime
 from pprint import pprint
 
 from django.db.models import Q
+from django.db import transaction
 
 from mediasancion.core.models import Partido, Distrito, Bloque, Persona
 from mediasancion.congreso.models import (Proyecto, FirmaProyecto, Legislador,
@@ -42,13 +53,6 @@ log = logging.getLogger(os.path.basename(__file__))
 
 AUDIT_ORIGIN = u'mscrap_import:%s' % datetime.utcnow().isoformat()
 
-debug_status = {
-    'time_start': time.time(),
-    'items_total': 0,
-    'items_left': { } }
-
-
-add_queue = []
 
 def store_legislador_item(x):
     try:
@@ -226,7 +230,7 @@ def store_firmaproyecto_item(x):
         proyecto = Proyecto.objects.get(camara_origen_expediente=x['proyecto_camara_origen_expediente'],
                                         camara_origen=x['proyecto_camara_origen'])
     except Proyecto.DoesNotExist:
-        return False # queue for later upserting.
+        return False
 
     if x.get('firmante_bloque'):
         try:
@@ -314,7 +318,7 @@ def store_dictamenproyecto_item(x):
         proyecto = Proyecto.objects.get(camara_origen_expediente=x['proyecto_camara_origen_expediente'],
                                         camara_origen=x['proyecto_camara_origen'])
     except Proyecto.DoesNotExist:
-        return False # queue for later upserting.
+        return False
 
     x_fecha = isodate.parse_date(x['fecha']) if 'fecha' in x else None
 
@@ -358,7 +362,7 @@ def store_tramiteproyecto_item(x):
         proyecto = Proyecto.objects.get(camara_origen_expediente=x['proyecto_camara_origen_expediente'],
                                         camara_origen=x['proyecto_camara_origen'])
     except Proyecto.DoesNotExist:
-        return False # queue for later upserting.
+        return False
 
     x_fecha = isodate.parse_date(x['fecha']) if 'fecha' in x else None
 
@@ -397,6 +401,7 @@ def store_tramiteproyecto_item(x):
 
 
 
+@transaction.commit_manually
 def store_item(t, x):
     ts = { 'LegisladorItem': store_legislador_item,
            'ProyectoItem': store_proyecto_item,
@@ -408,39 +413,32 @@ def store_item(t, x):
     except KeyError:
         log.warning(u"Skiping %s" % t)
         return
+
+    try:
+        s = _store(x)
+    except:
+        transaction.rollback()
+        raise
+
+    if s:
+        transaction.commit()
+        return True
     else:
-        if _store(x):
-            debug_status['items_left'][t] -= 1
-            return True
-        else:
-            log.debug(u"Queued  %s" % t)
-            add_queue.append((t, x))
-            return False
+        log.debug(u"Couldn't store %s" % t)
+        transaction.rollback()
+        return False
 
 
+def store_raw(line):
+    t, x = json.loads(line)
+    return store_item(t, x)
 
-def main_load(lines):
-    log.info('Loading...')
+def main_store(lines):
+    log.info('Storing...')
     for line in lines:
-         t, k = json.loads(line)
-         add_queue.append((t, k))
-         debug_status['items_left'][t] = debug_status['items_left'].get(t, 0) + 1
-    debug_status['items_total'] += len(add_queue)
+        if not store_raw(line):
+            return
 
-def main_upsert():
-    log.info('Upserting %d items...' % debug_status['items_total'])
-    while True:
-        if not add_queue:
-            log.info(u"Success!")
-            break
-        _t_add_queue, add_queue[:] = tuple(add_queue), []
-        nupdates = 0
-        for i in _t_add_queue:
-            if store_item(*i):
-                nupdates += 1
-        if nupdates == 0:
-            log.error(u"No item saved during last loop, aborting.")
-            break
 
 
 def _sighandle_pdb(sig, frame):
@@ -448,18 +446,6 @@ def _sighandle_pdb(sig, frame):
     pdb.Pdb().set_trace(frame)
 signal.signal(signal.SIGUSR1, _sighandle_pdb)
 
-def _sighandle_status(sig, frame):
-    d = debug_status
-    items_left_total = sum(d['items_left'].values())
-    items_done = d['items_total'] - items_left_total
-    runtime = time.time() - d['time_start']
-    s = u"| Status requested (SIGUSR2):\n"
-    for k,v in d['items_left'].items():
-        s += u"|   %s: %d left.\n" % (k, v)
-    s += u"|   ITEMS: Done %d - Left %d - Total %d\n" % (items_done, items_left_total, d['items_total'])
-    s += u"|   Runtime: %d seconds" % runtime
-    print >> sys.stderr, s
-signal.signal(signal.SIGUSR2, _sighandle_status)
 
 def parse_args():
     parser = optparse.OptionParser(usage=u"usage: %prog [options] FILE [FILE..]")
@@ -497,21 +483,11 @@ if __name__ == '__main__':
 
     if opts.wtf:
         log.info(u"WTF Post-mortem debugger enabled")
-
-    for fname in args:
-        with open(fname, 'rb') as f: # we use ascii-only input (JSON)
-            log.info(u"Opening %s..." % fname)
-            main_load(f)
     try:
-        def _sort_key(x):
-            k = x[0]
-            try:
-                return ('LegisladorItem', 'ProyectoItem', 'FirmaProyectoItem',
-                        'DictamenProyectoItem', 'TramiteProyectoItem').index(k)
-            except ValueError:
-                return 100
-        add_queue.sort(key=_sort_key)
-        main_upsert()
+        for fname in args:
+            with open(fname, 'rb') as f: # we use ascii-only input (JSON)
+                log.info(u"Opening %s..." % fname)
+                main_store(f)
     except Exception:
         log.error(u"Something bad happened!!! Nothing will saved.")
         if opts.wtf:
