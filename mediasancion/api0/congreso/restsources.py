@@ -50,10 +50,7 @@ class LegisladorRestsource(Restsource):
         'bloque',
         'distrito',
         'membresias_comisiones',
-        'firmas_proyectos',
-        'remote_source',
-        'remote_url',
-        'remote_id')
+        'firmas_proyectos')
 
     @property
     def relations(self):
@@ -100,10 +97,7 @@ class ComisionRestsource(Restsource):
         'nombre',
         'descripcion',
         'membresias',
-        'proyectos',
-        'remote_source',
-        'remote_url',
-        'remote_id')
+        'proyectos')
 
     @property
     def relations(self):
@@ -113,6 +107,12 @@ class ComisionRestsource(Restsource):
 
     def get_url(self, obj):
         return obj.api0_url
+
+    def get_proyectos(self, obj):
+        return obj.proyecto_set
+
+    def get_membresias(self, obj):
+        return obj.membresiacomision_set
 
     def filter(self, queryset, request, **params):
         if request.REQUEST.get('nombre'):
@@ -190,10 +190,7 @@ class ProyectoRestsource(Restsource):
         'publicacion_en',
         'publicacion_fecha',
         'reproduccion_expediente',
-        'ley_numero',
-        'remote_source',
-        'remote_url',
-        'remote_id')
+        'ley_numero')
 
     @property
     def relations(self):

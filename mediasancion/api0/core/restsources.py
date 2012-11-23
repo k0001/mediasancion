@@ -38,16 +38,13 @@ class DistritoRestsource(Restsource):
 
     fields = (
         'nombre',
-        'legisladores',
-        'remote_source',
-        'remote_url',
-        'remote_id')
+        'legisladores')
 
     @property
     def relations(self):
         from ..congreso.restsources import LegisladorRestsource
         return {
-            'legisladores': LegisladorRestsource(primary_fields_only=True) }
+            'legisladores': LegisladorRestsource(fields=['inicio', 'fin']) }
 
     def get_url(self, obj):
         return obj.api0_url
@@ -72,16 +69,13 @@ class PartidoRestsource(Restsource):
 
     fields = (
         'nombre',
-        'legisladores',
-        'remote_source',
-        'remote_url',
-        'remote_id')
+        'legisladores')
 
     @property
     def relations(self):
         from ..congreso.restsources import LegisladorRestsource
         return {
-            'legisladores': LegisladorRestsource(primary_fields_only=True), }
+            'legisladores': LegisladorRestsource(fields=['inicio', 'fin']), }
 
     def get_url(self, obj):
         return obj.api0_url
@@ -106,16 +100,13 @@ class BloqueRestsource(Restsource):
 
     fields = (
         'nombre',
-        'legisladores',
-        'remote_source',
-        'remote_url',
-        'remote_id')
+        'legisladores')
 
     @property
     def relations(self):
         from ..congreso.restsources import LegisladorRestsource
         return {
-            'legisladores': LegisladorRestsource(primary_fields_only=True) }
+            'legisladores': LegisladorRestsource(fields=['inicio', 'fin']) }
 
     def get_url(self, obj):
         return obj.api0_url
@@ -147,16 +138,13 @@ class PersonaRestsource(Restsource):
         'telefono',
         'website',
         'foto',
-        'legisladores',
-        'remote_source',
-        'remote_url',
-        'remote_id')
+        'legisladores')
 
     @property
     def relations(self):
         from ..congreso.restsources import LegisladorRestsource
         return {
-            'legisladores': LegisladorRestsource(primary_fields_only=True) }
+            'legisladores': LegisladorRestsource(fields=['inicio', 'fin']) }
 
     def get_url(self, obj):
         return obj.api0_url
@@ -180,4 +168,3 @@ class PersonaRestsource(Restsource):
         if request.REQUEST.get('website'):
             queryset = queryset.filter(website=request.REQUEST['website'])
         return queryset.filter(**params)
-
