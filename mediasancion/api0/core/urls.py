@@ -28,7 +28,7 @@ from restsources.restponders.xml import XMLRestponder
 from .restsources import DistritoRestsource, PartidoRestsource, BloqueRestsource, PersonaRestsource
 
 
-handler = Handler([JSONRestponder(), JSONPRestponder()]) # , XMLRestponder()])
+handler = Handler([JSONRestponder(), JSONPRestponder(), XMLRestponder()])
 
 
 
@@ -36,7 +36,8 @@ handler = Handler([JSONRestponder(), JSONPRestponder()]) # , XMLRestponder()])
 urlpatterns_distritos = patterns('',
     url(r'^$',
         handler,
-        {'handler_options': {'restsource': DistritoRestsource(excluded=['legisladores'])}},
+        {'handler_options': {'restsource':
+        DistritoRestsource(primary_fields_only=True)}},
         name='list'),
 
     url(r'^(?P<uuid>.+)/$',
@@ -50,7 +51,7 @@ urlpatterns_distritos = patterns('',
 urlpatterns_partidos = patterns('',
     url(r'^$',
         handler,
-        {'handler_options': {'restsource': PartidoRestsource(excluded=['legisladores'])}},
+        {'handler_options': {'restsource': PartidoRestsource(primary_fields_only=True)}},
         name='list'),
 
     url(r'^(?P<uuid>.+)/$',
@@ -64,7 +65,7 @@ urlpatterns_partidos = patterns('',
 urlpatterns_bloques = patterns('',
     url(r'^$',
         handler,
-        {'handler_options': {'restsource': BloqueRestsource(excluded=['legisladores'])}},
+        {'handler_options': {'restsource': BloqueRestsource(primary_fields_only=True)}},
         name='list'),
 
     url(r'^(?P<uuid>.+)/$',
@@ -77,7 +78,7 @@ urlpatterns_bloques = patterns('',
 urlpatterns_personas = patterns('',
     url(r'^$',
         handler,
-        {'handler_options': {'restsource': PersonaRestsource()}},
+        {'handler_options': {'restsource': PersonaRestsource(primary_fields_only=True)}},
         name='list'),
 
     url(r'^(?P<uuid>.+)/$',

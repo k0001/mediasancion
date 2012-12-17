@@ -29,7 +29,7 @@ from restsources.restponders.xml import XMLRestponder
 from .restsources import ProyectoRestsource, ComisionRestsource, LegisladorRestsource
 
 
-handler = Handler([JSONRestponder(), JSONPRestponder()]) # , XMLRestponder()])
+handler = Handler([JSONRestponder(), JSONPRestponder(), XMLRestponder()])
 
 
 # URL namespace: api0:congreso:proyectos
@@ -50,7 +50,7 @@ urlpatterns_proyectos = patterns('',
 urlpatterns_comisiones = patterns('',
     url(r'^$',
         handler,
-        {'handler_options': {'restsource': ComisionRestsource(fields=['nombre', 'camara'])}},
+        {'handler_options': {'restsource': ComisionRestsource(primary_fields_only=True)}},
         name='list'),
 
     url(r'^(?P<uuid>.+)/$',
