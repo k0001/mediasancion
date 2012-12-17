@@ -34,10 +34,8 @@ urlpatterns = patterns('',
 #        name='search'),
 
     url(r'^api/0/', include('mediasancion.api0.urls',
-                            namespace='api0', app_name='api0')),
+                            namespace='api0', app_name='api0'))
 
-    url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
-    url(r'^admin/', include(admin.site.urls)),
 
 # TEMPORARILY DISABLED. We are serving just the API right now.
 #    url(r'', include('mediasancion.core.urls',
@@ -50,8 +48,13 @@ urlpatterns = patterns('',
 
 if settings.DEBUG:
     urlpatterns += patterns('',
+        # Static files
         url(r'^%s/(?P<path>.*)$' % settings.MEDIA_URL.strip('/'),
             'django.views.static.serve',
-            { 'document_root': settings.MEDIA_ROOT, 'show_indexes': True } )
+            { 'document_root': settings.MEDIA_ROOT, 'show_indexes': True } ),
+
+        # Admin interface
+        url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
+        url(r'^admin/', include(admin.site.urls)),
     )
 
