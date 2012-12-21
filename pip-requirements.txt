@@ -5,7 +5,7 @@ psycopg2
 PIL
 BeautifulSoup==3.2.0
 
--e git://github.com/k0001/django-restsources.git@5c0f175#egg=django-restsources
+-e git://github.com/k0001/django-restsources.git@91605aa#egg=django-restsources
 -e git://github.com/k0001/django-iso8601.git#egg=django-iso8601
 -e git://github.com/k0001/django-gqslpagination.git@615775009#egg=django-gqslpagination
 
