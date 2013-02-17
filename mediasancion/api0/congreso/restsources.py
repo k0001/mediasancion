@@ -50,6 +50,8 @@ class LegisladorRestsource(Restsource):
         'bloque',
         'distrito',
         'membresias_comisiones',
+        'membresias_comisiones.comision',
+        'membresias_comisiones.cargo',
         'firmas_proyectos')
 
     @property
@@ -97,7 +99,8 @@ class ComisionRestsource(Restsource):
         'nombre',
         'descripcion',
         'membresias',
-        'proyectos')
+        'proyectos',
+        'num_proyectos')
 
     @property
     def relations(self):
@@ -113,6 +116,9 @@ class ComisionRestsource(Restsource):
 
     def get_membresias(self, obj):
         return obj.membresiacomision_set
+
+    def get_num_proyectos(self, obj):
+        return obj.proyecto_set.count()
 
     def filter(self, queryset, request, **params):
         if request.REQUEST.get('nombre'):
@@ -184,6 +190,8 @@ class ProyectoRestsource(Restsource):
         'fundamentos',
         'firmantes',
         'comisiones',
+        'comisiones.nombre',
+        'comisiones.camara',
         'texto_completo_url',
         'texto_mediasancion_senadores_url',
         'texto_mediasancion_diputados_url',
