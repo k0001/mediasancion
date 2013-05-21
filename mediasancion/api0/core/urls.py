@@ -36,7 +36,7 @@ handler = Handler([JSONRestponder(), JSONPRestponder(), XMLRestponder()])
 urlpatterns_distritos = patterns('',
     url(r'^$',
         handler,
-        {'handler_options': {'restsource': DistritoRestsource(primary_fields_only=True)
+        {'handler_options': {'restsource': DistritoRestsource(primary_fields_only=True),
                              'paginate_by': 200,
                              'paginate_by_max': 200 }},
 
